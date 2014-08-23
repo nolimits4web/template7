@@ -226,7 +226,7 @@ window.Template7 = (function () {
                 for (var key in cache) {
                     if (key.indexOf('template_') >= 0 && cache[key] === t.template) {
                         id = key.split('template_')[1];
-                        if (cache['data_' + id] === data) cached = cache['rendered_' + id];
+                        if (cache['data_' + id] === JSON.stringify(data)) cached = cache['rendered_' + id];
                     }
                 }
                 if (cached) return cached;
@@ -235,7 +235,7 @@ window.Template7 = (function () {
             if (t.options.cache) {
                 id = new Date().getTime();
                 cache['template_' + id] = t.template;
-                cache['data_' + id] = data;
+                cache['data_' + id] = JSON.stringify(data);
                 cache['rendered_' + id] = rendered;
             }
             return rendered;
@@ -321,6 +321,7 @@ window.Template7 = (function () {
         // Clear by passed data
         for (key in cache) {
             var lookFor = typeof arg === 'string' ? 'template_' : 'data_';
+            var compareWith = typeof arg === 'string' ? arg : JSON.strigify(arg);
             if (key.indexOf(lookFor) >= 0 && cache[key] === arg) {
                 id = key.split('_')[1];
             }
