@@ -1,0 +1,52 @@
+{
+  "name": "Template7",
+  "version": "0.9.6",
+  "description": "Mobile-first HTML template engine",
+  "main": "dist/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolimits4web/Template7.git"
+  },
+  "keywords": [
+    "mobile", 
+    "template", 
+    "javascript", 
+    "ios7", 
+    "ios8", 
+    "ios 8", 
+    "iphone", 
+    "ipad", 
+    "phonegap", 
+    "framework7",
+    "handlebars",
+    "mustache"
+  ],
+  "author": "Vladimir Kharlampidi",
+  "license": [
+    "MIT"
+  ],
+  "bugs": {
+    "url": "https://github.com/nolimits4web/Template7/issues"
+  },
+  "homepage": "http://www.idangero.us/framework7/docs/template7.html",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "load-grunt-tasks": "~0.6.0",
+    "jshint": "~2.5.2",
+    "grunt-contrib-concat": "~0.5.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-uglify": "~0.5.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-connect": "~0.8.0",
+    "grunt-open": "~0.2.3",
+    "jshint-stylish": "~0.4.0",
+    "time-grunt": "~0.4.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  }
+}

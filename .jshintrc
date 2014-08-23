@@ -1,0 +1,31 @@
+{
+  "node"         : true,
+  "browser"      : true,
+  "esnext"       : true,
+  "bitwise"      : false,
+  "curly"        : false,
+  "eqeqeq"       : true,
+  "eqnull"       : true,
+  "immed"        : true,
+  "latedef"      : true,
+  "newcap"       : true,
+  "noarg"        : true,
+  "undef"        : true,
+  "strict"       : true,
+  "trailing"     : true,
+  "smarttabs"    : true,
+  "quotmark"     : "single",
+  "indent"       : 4,
+  "white"        : true,
+  "globals":{
+    "document": true,
+    "WebKitCSSMatrix": true,
+    "Document": true,
+    "window": true,
+    "$":true,
+    "Framework7":true,
+    "Event":true,
+    "DocumentTouch":true,
+    "app":true
+  }
+}
