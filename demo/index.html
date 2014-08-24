@@ -24,9 +24,12 @@
             background: rgba(0, 255, 0, 0.3);
             color:#fff;
             padding: 10px 0;
-            /*display: none;*/
             position: relative;
             z-index: 1;
+        }
+        #rendered-time span {
+            display: inline-block;
+            margin: 0 50px;
         }
         .bg {
             position: fixed;
@@ -145,7 +148,6 @@
 <body>
     <div id="rendered-time"></div>
     <div id="content-wrap"></div>
-
     <script type="text/template" id="show-template">
         <div class="bg" style="background-image:url({{images.fanart}})"></div>
         <div class="header" style="background-image:url({{images.fanart}})">
@@ -174,9 +176,9 @@
             <p>{{overview}}</p>
         </div>
         {{#each seasons reverse="true"}}
-            <div class="season" data-index="{{@index}}">
+            <div class="season{{#if @first}} season-first{{/if}}{{#if @last}} season-last{{/if}}" data-index="{{@index}}">
                 <div class="season-title">Season {{season}}</div>
-                {{#each episodes}}
+                {{#episodes}}
                     <div class="episode" data-index="{{@index}}">
                         <div class="pic">
                             {{#if screen}}
@@ -197,7 +199,7 @@
                             {{/if}}
                         </div>
                     </div>
-                {{/each}}
+                {{/episodes}}
             </div>
         {{/each}}
     </script>
@@ -221,23 +223,27 @@
             m = m < 10 ? '0' + m : m;
             return month + ' ' + day + ', ' + year + ' ' + h + ':' + m;
         });
+        
         // Template
         var template = document.getElementById('show-template').innerHTML;
 
-        // Start time
-        var startTime = new Date().getTime();
-
-        // Render
+        // Direct rendering
+        var directStartTime = new Date().getTime();
         var rendered = Template7(template, tvShow);
-            
-        // End time
-        var template7Time = new Date().getTime() - startTime;
+        var directEndTime = new Date().getTime();
+
+        // Compile and render
+        var compileStartTime = new Date().getTime();
+        var compiled = Template7(template).compile();
+        var compileEndTime = new Date().getTime();
+        var compiledRendered = compiled(tvShow);
+        var compiledRenderedTime = new Date().getTime();
 
         // Insert rendered template
-        document.getElementById('content-wrap').innerHTML = rendered;
+        document.getElementById('content-wrap').innerHTML = compiledRendered;
 
         // Insert rendered time
-        document.getElementById('rendered-time').innerHTML = 'Rendered in ' + (template7Time) + 'ms';
+        document.getElementById('rendered-time').innerHTML = '<span>Direct rendering in ' + (directEndTime - directStartTime) + 'ms</span><span>Compilation + rendering in ' + (compiledRenderedTime - compileStartTime) + 'ms</span><span>Rendering precompiled ' + (compiledRenderedTime - compileEndTime) + 'ms';
     </script>
     
 </body>
