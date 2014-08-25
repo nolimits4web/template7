@@ -120,10 +120,10 @@ window.Template7 = (function () {
         t.context = data;
         
         function getContext(contextName, context, privateData) {
+            var _context;
             if (contextName === 'this' || typeof contextName === 'undefined') {
                 return context;
             }
-
             if (contextName.indexOf('@') >= 0) {
                 //private data
                 var privateVarName = contextName.replace(/[@ ]/g, '');
@@ -132,7 +132,7 @@ window.Template7 = (function () {
             
             if (contextName.indexOf('.') > 0 && contextName.indexOf('../') < 0) {
                 var dataPath = contextName.split('.');
-                var _context = context;
+                _context = context;
                 for (var j = 0; j < dataPath.length; j++) {
                     if (dataPath[j] === 'this') {
                         _context = context;
@@ -144,17 +144,19 @@ window.Template7 = (function () {
                         _context = undefined;
                     }
                 }
-                context = _context;
             }
             else if (contextName.indexOf('../') >= 0) {
             }
             else if (context[contextName]) {
-                context = context[contextName];
+                _context = context[contextName];
             }
             else {
-                context = undefined;
+                _context = undefined;
             }
-            return context;
+            if (_context && isFunction(_context)) {
+                _context = _context.call(context);
+            }
+            return _context;
         }
         function createOptions(block, privateData) {
             return {
@@ -220,7 +222,6 @@ window.Template7 = (function () {
             return resultString;
         }
 
-        var depth = 0;
         function getCompileFn(block) {
             if (block.content) return compile(block.content);
             else return function () {return ''; };
@@ -230,12 +231,22 @@ window.Template7 = (function () {
             else return function () {return ''; };
         }
         function getCompileVar(name) {
-            var variable = name === 'this' ? 'ctx' : 'ctx.' + name;
+            var parents, variable, context;
+            
+            if (name.indexOf('.') > 0) {
+                if (name.indexOf('this') === 0) variable = name.replace('this', 'ctx');
+                else variable = 'ctx.' + name;
+            }
+            else {
+                variable = name === 'this' ? 'ctx' : 'ctx.' + name;
+            }
             if (name && name.indexOf('@') >= 0) {
                 variable = '(data && data.' + name.replace('@', '') + ')';
             }
+                
             return variable;
         }
+        var depth = 1;
         function compile(template) {
             template = template || t.template;
             if (typeof template !== 'string') {
@@ -246,31 +257,32 @@ window.Template7 = (function () {
                 return function () { return ''; };
             }
             var resultString = '(function (ctx, data) {\n';
-            if (depth === 0) {
-                resultString += 'function c(val) {if (typeof val !== "undefined") return val; else return ""}\n';
+            if (depth === 1) {
                 resultString += 'function isArray(arr){return Object.prototype.toString.apply(arr) === \'[object Array]\';}\n';
+                resultString += 'function isFunction(func){return (typeof func === \'function\');}\n';
+                resultString += 'function c(val, ctx) {if (typeof val !== "undefined") {if (isFunction(val)) {return val.call(ctx);} else return val;} else return "";}\n';
             }
             depth ++;
-            resultString += 'var ret = \'\';\n';
+            resultString += 'var r = \'\';\n';
             var i, j, context;
             for (i = 0; i < blocks.length; i++) {
                 var block = blocks[i];
                 // Plain block
                 if (block.type === 'plain') {
-                    resultString += 'ret +=\'' + (block.content).replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'') + '\';';
+                    resultString += 'r +=\'' + (block.content).replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'') + '\';';
                     continue;
                 }
                 var variable;
                 // Variable block
                 if (block.type === 'variable') {
                     variable = getCompileVar(block.contextName);
-                    resultString += 'ret += c(' + variable + ');';
+                    resultString += 'r += c(' + variable + ', ctx);';
                 }
                 // Helpers block
                 if (block.type === 'helper') {
                     if (block.helperName in t.helpers) {
                         variable = getCompileVar(block.contextName);
-                        resultString += 'ret += (Template7.helpers.' + block.helperName + ').call(ctx, ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block) + ', inverse: ' + getCompileInverse(block) + '});';
+                        resultString += 'r += (Template7.helpers.' + block.helperName + ').call(ctx, ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block) + ', inverse: ' + getCompileInverse(block) + '});';
                     }
                     else {
                         if (block.contextName) {
@@ -280,15 +292,15 @@ window.Template7 = (function () {
                             variable = getCompileVar(block.helperName);
                             resultString += 'if (' + variable + ') {';
                             resultString += 'if (isArray(' + variable + ')) {';
-                            resultString += 'ret += (Template7.helpers.each).call(ctx, ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block) + ', inverse: ' + getCompileInverse(block) + '});';
+                            resultString += 'r += (Template7.helpers.each).call(ctx, ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block) + ', inverse: ' + getCompileInverse(block) + '});';
                             resultString += '}else {';
-                            resultString += 'ret += (Template7.helpers.with).call(ctx, ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block) + ', inverse: ' + getCompileInverse(block) + '});';
+                            resultString += 'r += (Template7.helpers.with).call(ctx, ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block) + ', inverse: ' + getCompileInverse(block) + '});';
                             resultString += '}}';
                         }
                     }
                 }
             }
-            resultString += '\nreturn ret;})';
+            resultString += '\nreturn r;})';
             return eval.call(window, resultString);
         }
         t.compile = function (template) {
