@@ -227,10 +227,6 @@
         // Template
         var template = document.getElementById('show-template').innerHTML;
 
-        // Direct rendering
-        var directStartTime = new Date().getTime();
-        var rendered = Template7(template, tvShow);
-        var directEndTime = new Date().getTime();
 
         // Compile and render
         var compileStartTime = new Date().getTime();
@@ -243,7 +239,7 @@
         document.getElementById('content-wrap').innerHTML = compiledRendered;
 
         // Insert rendered time
-        document.getElementById('rendered-time').innerHTML = '<span>Direct rendering in ' + (directEndTime - directStartTime) + 'ms</span><span>Compilation + rendering in ' + (compiledRenderedTime - compileStartTime) + 'ms</span><span>Rendering precompiled ' + (compiledRenderedTime - compileEndTime) + 'ms';
+        document.getElementById('rendered-time').innerHTML = '<span>Compilation: ' + (compileEndTime - compileStartTime) + 'ms</span><span>Rendering: ' + (compiledRenderedTime - compileEndTime) + 'ms</span><span>Compilation + Rendering: ' + (compiledRenderedTime - compileStartTime) + 'ms</span>';
     </script>
     
 </body>
