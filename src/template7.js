@@ -283,9 +283,7 @@ window.Template7 = (function () {
         };
     };
     Template7.prototype = {
-        options: {
-            // cache: false
-        },
+        options: {},
         helpers: {
             'if': function (context, options) {
                 if (isFunction(context)) { context = context.call(this); }
@@ -355,8 +353,8 @@ window.Template7 = (function () {
         delete Template7.prototype.helpers[name];
     };
     
-    t7.compile = function (template) {
-        var instance = new Template7(template);
+    t7.compile = function (template, options) {
+        var instance = new Template7(template, options);
         return instance.compile();
     };
     
