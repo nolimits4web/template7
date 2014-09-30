@@ -173,10 +173,9 @@ window.Template7 = (function () {
         }
         return blocks;
     }
-    var Template7 = function (template, data) {
+    var Template7 = function (template) {
         var t = this;
         t.template = template;
-        t.context = data;
         
         function getCompileFn(block, depth) {
             if (block.content) return compile(block.content, depth);
@@ -242,7 +241,7 @@ window.Template7 = (function () {
                 var block = blocks[i];
                 // Plain block
                 if (block.type === 'plain') {
-                    resultString += 'r +=\'' + (block.content).replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'') + '\';';
+                    resultString += 'r +=\'' + (block.content).replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'') + '\';';
                     continue;
                 }
                 var variable, compiledArguments;
@@ -255,7 +254,7 @@ window.Template7 = (function () {
                 if (block.type === 'helper') {
                     if (block.helperName in t.helpers) {
                         compiledArguments = getCompiledArguments(block.contextName, ctx);
-                        resultString += 'r += (Template7.helpers.' + block.helperName + ').call(' + ctx + ', ' + compiledArguments + ', {hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block, depth+1) + ', inverse: ' + getCompileInverse(block, depth+1) + '});';
+                        resultString += 'r += (Template7.helpers.' + block.helperName + ').call(' + ctx + ', ' + (compiledArguments && (compiledArguments + ',')) +'{hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block, depth+1) + ', inverse: ' + getCompileInverse(block, depth+1) + '});';
                     }
                     else {
                         if (block.contextName.length > 0) {
@@ -350,6 +349,10 @@ window.Template7 = (function () {
     };
     t7.registerHelper = function (name, fn) {
         Template7.prototype.helpers[name] = fn;
+    };
+    t7.deregisterHelper = function (name) {
+        Template7.prototype.helpers[name] = undefined;  
+        delete Template7.prototype.helpers[name];
     };
     
     t7.compile = function (template) {
