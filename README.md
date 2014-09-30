@@ -1,3 +1,6 @@
+[![devDependency Status](https://david-dm.org/nolimits4web/template7/dev-status.svg)](https://david-dm.org/nolimits4web/template7#info=devDependencies)
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=nolimits4web&url=https://github.com/
+
 Template7
 =========
 
