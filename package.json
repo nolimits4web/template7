@@ -1,6 +1,6 @@
 {
   "name": "Template7",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mobile-first HTML template engine",
   "main": "dist/",
   "repository": {
