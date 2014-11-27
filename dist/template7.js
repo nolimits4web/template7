@@ -1,8 +1,8 @@
 /*
- * Template7 1.0.1
+ * Template7 1.0.2
  * Mobile-first JavaScript template engine
  *
- * http://www.idangero.us/framework7/docs/template7.html
+ * http://www.idangero.us/template7/
  *
  * Copyright 2014, Vladimir Kharlampidi
  * The iDangero.us
@@ -10,7 +10,7 @@
  *
  * Licensed under MIT
  *
- * Released on: October 7, 2014
+ * Released on: November 27, 2014
 */
 window.Template7 = (function () {
     'use strict';
@@ -201,24 +201,27 @@ window.Template7 = (function () {
         }
         function getCompileVar(name, ctx) {
             var parents, variable, context;
-            
-            if (name.indexOf('.') > 0) {
-                if (name.indexOf('this') === 0) variable = name.replace('this', ctx);
-                else variable = ctx + '.' + name;
+            if (name.indexOf('@global') >= 0) {
+                variable = '(Template7.global && Template7.global.' + (name.split('@global.')[1]) + ')';
             }
-            else if (name.indexOf('../') === 0) {
-                var levelUp = name.split('../').length - 1;
-                var newName = name.split('../')[name.split('../').length - 1];
-                var newDepth = ctx.split('_')[1] - levelUp;
-                variable = 'ctx_' + (newDepth >= 1 ? newDepth : 1) + '.' + newName;
-            }
-            else {
-                variable = name === 'this' ? ctx : ctx + '.' + name;
-            }
-            if (name && name.indexOf('@') >= 0) {
+            else if (name.indexOf('@') >= 0) {
                 variable = '(data && data.' + name.replace('@', '') + ')';
             }
-                
+            else {
+                if (name.indexOf('.') > 0) {
+                    if (name.indexOf('this') === 0) variable = name.replace('this', ctx);
+                    else variable = ctx + '.' + name;
+                }
+                else if (name.indexOf('../') === 0) {
+                    var levelUp = name.split('../').length - 1;
+                    var newName = name.split('../')[name.split('../').length - 1];
+                    var newDepth = ctx.split('_')[1] - levelUp;
+                    variable = 'ctx_' + (newDepth >= 1 ? newDepth : 1) + '.' + newName;
+                }
+                else {
+                    variable = name === 'this' ? ctx : ctx + '.' + name;
+                }
+            }
             return variable;
         }
         function getCompiledArguments(contextArray, ctx) {
@@ -346,7 +349,7 @@ window.Template7 = (function () {
             },
             'join': function (context, options) {
                 if (isFunction(context)) { context = context.call(this); }
-                return context.join(options.hash.delimeter);
+                return context.join(options.hash.delimiter || options.hash.delimeter);
             }
         }
     };

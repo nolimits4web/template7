@@ -5,9 +5,9 @@
     "url": "https://github.com/nolimits4web/Template7.git"
   },
   "description": "Mobile-first JavaScript template engine",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Vladimir Kharlampidi",
-  "homepage": "http://www.idangero.us/framework7/docs/template7.html",
+  "homepage": "http://www.idangero.us/template7/",
   "keywords": [
     "mobile", 
     "template", 
