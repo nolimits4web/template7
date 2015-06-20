@@ -1,7 +1,7 @@
 # Change Log
 
 ## Template7 v1.0.6 - Released on June 20, 2015
-    * Partials support%
+    * Partials support:
         * `registerPartial(name, template)` method to register partial
         * `unregisterPartial(name, template)` method to unregister partial
         * `>` helper to include partials like `{{> list}}`
