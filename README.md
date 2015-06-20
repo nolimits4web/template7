@@ -11,4 +11,5 @@ Template7 is the default template engine in [Framework7](http://idangero.us/fram
 ## Docs
 
 http://www.idangero.us/template7/
+
 http://www.idangero.us/framework7/docs/template7.html
