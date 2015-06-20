@@ -1,5 +1,12 @@
 # Change Log
 
+## Template7 v1.0.6 - Released on June 20, 2015
+    * Partials support%
+        * `registerPartial(name, template)` method to register partial
+        * `unregisterPartial(name, template)` method to unregister partial
+        * `>` helper to include partials like `{{> list}}`
+    * New `escape` helper for escaping strings 
+
 ## Template7 v1.0.5 - Released on March 28, 2015
     * Support for root context that may be used in templates as `{{@root.someVar}}`
     * Improved support for paths:
