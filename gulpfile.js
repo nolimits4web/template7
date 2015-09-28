@@ -82,7 +82,7 @@
     });
 
     gulp.task('open', function () {
-        return gulp.src(paths.demo + 'index.html').pipe(open('', { url: 'http://localhost:3000/' + paths.demo + 'index.html'}));
+        return gulp.src(paths.demo + 'index.html').pipe(open({ uri: 'http://localhost:3000/' + paths.demo + 'index.html'}));
     });
 
     gulp.task('server', [ 'watch', 'connect', 'open' ]);

@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.0.7 - Released on September 28, 2015
+    * Added check is variable is `null` and don't output it in this case
+
 ## Template7 v1.0.6 - Released on June 20, 2015
     * Partials support:
         * `registerPartial(name, template)` method to register partial
