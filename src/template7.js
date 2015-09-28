@@ -262,7 +262,7 @@ window.Template7 = (function () {
             if (depth === 1) {
                 resultString += 'function isArray(arr){return Object.prototype.toString.apply(arr) === \'[object Array]\';}\n';
                 resultString += 'function isFunction(func){return (typeof func === \'function\');}\n';
-                resultString += 'function c(val, ctx) {if (typeof val !== "undefined") {if (isFunction(val)) {return val.call(ctx);} else return val;} else return "";}\n';
+                resultString += 'function c(val, ctx) {if (typeof val !== "undefined" && val !== null) {if (isFunction(val)) {return val.call(ctx);} else return val;} else return "";}\n';
             }
             resultString += 'var r = \'\';\n';
             var i, j, context;
