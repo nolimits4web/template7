@@ -339,7 +339,7 @@ window.Template7 = (function () {
                 for (var hashName in options.hash) {
                     ctx[hashName] = options.hash[hashName];
                 }
-                return p.compiled(ctx);
+                return p.compiled(ctx, options.data);
             },
             'escape': function (context, options) {
                 if (typeof context !== 'string') {
