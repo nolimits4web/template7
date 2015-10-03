@@ -47,11 +47,12 @@
     
     gulp.task('build', function (cb) {
         gulp.src(paths.source + 'template7.js')
+            .pipe(sourcemaps.init())
             .pipe(header(t7.banner, { pkg : t7.pkg, date: t7.date } ))
-            .pipe(gulp.dest(paths.build))
-
             .pipe(jshint())
             .pipe(jshint.reporter(stylish))
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(paths.build))
             .pipe(connect.reload());
         cb();
     });
@@ -66,6 +67,8 @@
                 path.basename = t7.filename + '.min';
             }))
             .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(paths.dist));
+        gulp.src(paths.build + 'template7.js.map')
             .pipe(gulp.dest(paths.dist));
     });
 
