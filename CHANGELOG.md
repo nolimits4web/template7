@@ -1,7 +1,7 @@
 # Change Log
 
 ## Template7 v1.1.0 - Released on October 3, 2015
-    * Support for access to data (@index, @key) and root context (@root) in partials
+    * Access to data (@index, @key) and root context (@root) in partials
 
 ## Template7 v1.0.7 - Released on September 28, 2015
     * Added check is variable is `null` and don't output it in this case
