@@ -240,7 +240,8 @@ window.Template7 = (function () {
         function getCompiledArguments(contextArray, ctx) {
             var arr = [];
             for (var i = 0; i < contextArray.length; i++) {
-                if (contextArray[i].indexOf('"') === 0) arr.push(contextArray[i]);
+                if (/^['"]/.test(contextArray[i])) arr.push(contextArray[i]);
+                else if (/^(true|false|\d+)$/.test(contextArray[i])) arr.push(contextArray[i]);
                 else {
                     arr.push(getCompileVar(contextArray[i], ctx));
                 }
