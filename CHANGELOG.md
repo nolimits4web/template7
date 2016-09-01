@@ -1,5 +1,9 @@
 # Change Log
 
+## Template7 v1.1.2 - Released on September 1, 2016
+    * Added number, boolean, and single-quote-strings argument types support for template helpers #19
+    * Ability to use single/double quotes in helpers and mix them
+
 ## Template7 v1.1.0 - Released on October 3, 2015
     * Access to data (@index, @key) and root context (@root) in partials
 
@@ -28,5 +32,5 @@
 ## Template7 v1.0.1 - Released on October 7, 2014
     * Allow helpers without context
     * New `.unregisterHelper` method to remove registered helpers
-    
+
 ## Template7 v1.0.0 - Released on September 12, 2014

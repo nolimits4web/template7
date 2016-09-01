@@ -1,16 +1,16 @@
 /**
- * Template7 1.1.0
+ * Template7 1.1.2
  * Mobile-first JavaScript template engine
  * 
  * http://www.idangero.us/template7/
  * 
- * Copyright 2015, Vladimir Kharlampidi
+ * Copyright 2016, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  * 
  * Licensed under MIT
  * 
- * Released on: October 3, 2015
+ * Released on: September 1, 2016
  */
 window.Template7 = (function () {
     'use strict';
@@ -23,18 +23,30 @@ window.Template7 = (function () {
     function isFunction(func) {
         return typeof func === 'function';
     }
+    function _escape(string) {
+        return typeof window !== 'undefined' && window.escape ? window.escape(string) : string
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
     var cache = {};
+    var quoteSingleRexExp = new RegExp('\'', 'g');
+    var quoteDoubleRexExp = new RegExp('"', 'g');
     function helperToSlices(string) {
         var helperParts = string.replace(/[{}#}]/g, '').split(' ');
         var slices = [];
         var shiftIndex, i, j;
         for (i = 0; i < helperParts.length; i++) {
             var part = helperParts[i];
+            var blockQuoteRegExp, openingQuote;
             if (i === 0) slices.push(part);
             else {
-                if (part.indexOf('"') === 0) {
+                if (part.indexOf('"') === 0 || part.indexOf('\'') === 0) {
+                    blockQuoteRegExp = part.indexOf('"') === 0 ? quoteDoubleRexExp : quoteSingleRexExp;
+                    openingQuote = part.indexOf('"') === 0 ? '"' : '\'';
                     // Plain String
-                    if (part.match(/"/g).length === 2) {
+                    if (part.match(blockQuoteRegExp).length === 2) {
                         // One word string
                         slices.push(part);
                     }
@@ -43,7 +55,7 @@ window.Template7 = (function () {
                         shiftIndex = 0;
                         for (j = i + 1; j < helperParts.length; j++) {
                             part += ' ' + helperParts[j];
-                            if (helperParts[j].indexOf('"') >= 0) {
+                            if (helperParts[j].indexOf(openingQuote) >= 0) {
                                 shiftIndex = j;
                                 slices.push(part);
                                 break;
@@ -58,18 +70,18 @@ window.Template7 = (function () {
                         var hashParts = part.split('=');
                         var hashName = hashParts[0];
                         var hashContent = hashParts[1];
-                        if (hashContent.match(/"/g).length !== 2) {
+                        if (hashContent.match(blockQuoteRegExp).length !== 2) {
                             shiftIndex = 0;
                             for (j = i + 1; j < helperParts.length; j++) {
                                 hashContent += ' ' + helperParts[j];
-                                if (helperParts[j].indexOf('"') >= 0) {
+                                if (helperParts[j].indexOf(openingQuote) >= 0) {
                                     shiftIndex = j;
                                     break;
                                 }
                             }
                             if (shiftIndex) i = shiftIndex;
                         }
-                        var hash = [hashName, hashContent.replace(/"/g,'')];
+                        var hash = [hashName, hashContent.replace(blockQuoteRegExp,'')];
                         slices.push(hash);
                     }
                     else {
@@ -122,7 +134,7 @@ window.Template7 = (function () {
                         helperContext.push(slice);
                     }
                 }
-                
+
                 if (block.indexOf('{#') >= 0) {
                     // Condition/Helper
                     var helperStartIndex = i;
@@ -192,10 +204,10 @@ window.Template7 = (function () {
         }
         return blocks;
     }
-    var Template7 = function (template) {
+    var Template7 = function (template, options) {
         var t = this;
         t.template = template;
-        
+
         function getCompileFn(block, depth) {
             if (block.content) return compile(block.content, depth);
             else return function () {return ''; };
@@ -243,7 +255,7 @@ window.Template7 = (function () {
                             variable = part.replace('this', ctx);
                         }
                         else {
-                            variable += '.' + part;       
+                            variable += '.' + part;
                         }
                     }
                 }
@@ -254,7 +266,8 @@ window.Template7 = (function () {
         function getCompiledArguments(contextArray, ctx) {
             var arr = [];
             for (var i = 0; i < contextArray.length; i++) {
-                if (contextArray[i].indexOf('"') === 0) arr.push(contextArray[i]);
+                if (/^['"]/.test(contextArray[i])) arr.push(contextArray[i]);
+                else if (/^(true|false|\d+)$/.test(contextArray[i])) arr.push(contextArray[i]);
                 else {
                     arr.push(getCompileVar(contextArray[i], ctx));
                 }
@@ -305,9 +318,9 @@ window.Template7 = (function () {
                 if (block.type === 'helper') {
                     if (block.helperName in t.helpers) {
                         compiledArguments = getCompiledArguments(block.contextName, ctx);
-                        
+
                         resultString += 'r += (Template7.helpers.' + block.helperName + ').call(' + ctx + ', ' + (compiledArguments && (compiledArguments + ', ')) +'{hash:' + JSON.stringify(block.hash) + ', data: data || {}, fn: ' + getCompileFn(block, depth + 1) + ', inverse: ' + getCompileInverse(block, depth + 1) + ', root: root});';
-                        
+
                     }
                     else {
                         if (block.contextName.length > 0) {
@@ -343,7 +356,7 @@ window.Template7 = (function () {
                 var p = Template7.prototype.partials[partialName];
                 if (!p || (p && !p.template)) return '';
                 if (!p.compiled) {
-                    p.compiled = t7.compile(p.template);
+                    p.compiled = new Template7(p.template).compile();
                 }
                 var ctx = this;
                 for (var hashName in options.hash) {
@@ -355,11 +368,7 @@ window.Template7 = (function () {
                 if (typeof context !== 'string') {
                     throw new Error('Template7: Passed context to "escape" helper should be a string');
                 }
-                return context
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;');
+                return _escape(context);
             },
             'if': function (context, options) {
                 if (isFunction(context)) { context = context.call(this); }
@@ -433,7 +442,7 @@ window.Template7 = (function () {
                     return options.fn(this, options.data);
                 }
                 else {
-                    return options.inverse(this, options.data);   
+                    return options.inverse(this, options.data);
                 }
             }
         }
@@ -451,7 +460,7 @@ window.Template7 = (function () {
         Template7.prototype.helpers[name] = fn;
     };
     t7.unregisterHelper = function (name) {
-        Template7.prototype.helpers[name] = undefined;  
+        Template7.prototype.helpers[name] = undefined;
         delete Template7.prototype.helpers[name];
     };
     t7.registerPartial = function (name, template) {
@@ -463,12 +472,11 @@ window.Template7 = (function () {
             delete Template7.prototype.partials[name];
         }
     };
-    
     t7.compile = function (template, options) {
         var instance = new Template7(template, options);
         return instance.compile();
     };
-    
+
     t7.options = Template7.prototype.options;
     t7.helpers = Template7.prototype.helpers;
     t7.partials = Template7.prototype.partials;
