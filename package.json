@@ -33,16 +33,16 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
-    "jshint": "~2.8.0",
+    "jshint": "~2.9.3",
     "gulp": "~3.9.0",
-    "gulp-connect": "~2.2.0",
+    "gulp-connect": "~5.0.0",
     "gulp-open": "~1.0.0",
-    "gulp-uglify": "~1.4.1",
+    "gulp-uglify": "~2.0.0",
     "gulp-sourcemaps": "~1.6.0",
-    "gulp-jshint": "~1.11.2",
+    "gulp-jshint": "~2.0.1",
     "gulp-rename": "~1.2.2",
-    "gulp-header": "~1.7.1",
-    "jshint-stylish": "~2.0.1"
+    "gulp-header": "~1.8.8",
+    "jshint-stylish": "~2.2.1"
   },
   "scripts": {
     "test": "grunt test"
