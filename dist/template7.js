@@ -10,7 +10,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: September 1, 2016
+ * Released on: November 2, 2016
  */
 window.Template7 = (function () {
     'use strict';
@@ -251,7 +251,7 @@ window.Template7 = (function () {
                         variable += '[' + part + ']';
                     }
                     else {
-                        if (part.indexOf('this') === 0) {
+                        if (part === 'this' || part.indexOf('this.') >= 0 || part.indexOf('this[') >= 0 || part.indexOf('this(') >= 0) {
                             variable = part.replace('this', ctx);
                         }
                         else {
