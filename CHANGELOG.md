@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.1.4 - Released on December 12, 2016
+    * Fixed issue with quotes being added to helpers hash content
+
 ## Template7 v1.1.2 - Released on September 1, 2016
     * Added number, boolean, and single-quote-strings argument types support for template helpers #19
     * Ability to use single/double quotes in helpers and mix them
