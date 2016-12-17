@@ -1,5 +1,5 @@
 /**
- * Template7 1.1.2
+ * Template7 1.1.4
  * Mobile-first JavaScript template engine
  * 
  * http://www.idangero.us/template7/
@@ -10,7 +10,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: December 12, 2016
+ * Released on: December 17, 2016
  */
 window.Template7 = (function () {
     'use strict';
