@@ -1,0 +1,53 @@
+<div class="bg" style="background-image:url({{images.fanart}})"></div>
+<div class="header" style="background-image:url({{images.fanart}})">
+	<div class="gradient"></div>
+	<div class="left">
+		<div class="genres">{{join genres delimeter=", "}}</div>
+		<div class="year">{{year}}</div>
+		<h1>{{title}}</h1>
+	</div>
+	<ul class="props">
+		<li>
+			<b>Airs:</b> {{air_day}} at {{air_time}} on {{network}}
+		</li>
+		<li>
+			<b>Runtime:</b> {{runtime}}m
+		</li>
+		<li>
+			<b>Country:</b> {{country}}
+		</li>
+		<li>
+			<b>Status:</b> {{status}}
+		</li>
+	</ul>
+</div>
+<div class="overview">
+	<p>{{overview}}</p>
+</div>
+{{#each seasons reverse="true"}}
+<div class="season{{#if @first}} season-first{{/if}}{{#if @last}} season-last{{/if}}" data-index="{{@index}}">
+	<div class="season-title">Season {{season}}</div>
+	{{#episodes}}
+	<div class="episode" data-index="{{@index}}">
+		<div class="pic">
+			{{#if screen}}
+			<img src="{{screen}}">
+			{{/if}}
+		</div>
+		<div class="info">
+			<div class="episode-title">Episode {{episode}}{{#if title}}: {{title}}{{/if}}</div>
+			{{#if first_aired_iso}}<div class="date">{{formatDate first_aired_iso}}</div>{{/if}}
+			{{#if ratings.percentage}}{{#if ratings.votes}}
+			<div class="ratings">
+				<span>{{ratings.percentage}}%</span>
+				<span>{{ratings.votes}} votes</span>
+			</div>
+			{{/if}}{{/if}}
+			{{#if overview}}
+			<p>{{overview}}</p>
+			{{/if}}
+		</div>
+	</div>
+	{{/episodes}}
+</div>
+{{/each}}
