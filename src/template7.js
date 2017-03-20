@@ -1,4 +1,15 @@
-window.Template7 = (function () {
+Template7Context = (
+    typeof window !== `undefined` ?
+        window
+    :
+        (typeof global !== `undefined` ?
+            global
+        :
+            this
+        )
+);
+
+Template7Context.Template7 = (function () {
     'use strict';
     function isArray(arr) {
         return Object.prototype.toString.apply(arr) === '[object Array]';
@@ -10,7 +21,7 @@ window.Template7 = (function () {
         return typeof func === 'function';
     }
     function _escape(string) {
-        return typeof window !== 'undefined' && window.escape ? window.escape(string) : string
+        return typeof Template7Context !== 'undefined' && Template7Context.escape ? Template7Context.escape(string) : string
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -329,7 +340,7 @@ window.Template7 = (function () {
                 }
             }
             resultString += '\nreturn r;})';
-            return eval.call(window, resultString);
+            return eval.call(Template7Context, resultString);
         }
         t.compile = function (template) {
             if (!t.compiled) {
@@ -472,3 +483,6 @@ window.Template7 = (function () {
     t7.partials = Template7.prototype.partials;
     return t7;
 })();
+
+if (typeof module !== `undefined` && this.module !== module)
+    module.exports = Template7;
