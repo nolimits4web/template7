@@ -1,3 +1,4 @@
+// note that express must be installed with `npm install express`
 const express = require(`express`);
 const app = express();
 
@@ -24,7 +25,7 @@ Template7.registerHelper('formatDate', function(date) {
 // load template
 // note: synchronous is acceptable here because it is only called once at server load
 // but: in other cases async would be much better
-const template = fs.readFileSync(`test.html`, `utf8`);
+const template = fs.readFileSync(`template.html`, `utf8`);
 
 // Compile and render
 const compileStartTime = new Date().getTime(),
