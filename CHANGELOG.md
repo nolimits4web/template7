@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.2.0 - Released on April 15, 2017
+    * Added support for node.js and commonjs
+
 ## Template7 v1.1.4 - Released on December 12, 2016
     * Fixed issue with quotes being added to helpers hash content
 
@@ -18,7 +21,7 @@
         * `registerPartial(name, template)` method to register partial
         * `unregisterPartial(name, template)` method to unregister partial
         * `>` helper to include partials like `{{> list}}`
-    * New `escape` helper for escaping strings 
+    * New `escape` helper for escaping strings
 
 ## Template7 v1.0.5 - Released on March 28, 2015
     * Support for root context that may be used in templates as `{{@root.someVar}}`
