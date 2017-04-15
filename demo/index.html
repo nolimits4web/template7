@@ -208,7 +208,7 @@
     <script src="../dist/template7.min.js"></script>
     <!-- JSON with demo data-->
     <script src="tv-show.js"></script>
-    
+
     <script>
         // Helper to format dates
         Template7.registerHelper('formatDate', function (date) {
@@ -223,7 +223,7 @@
             m = m < 10 ? '0' + m : m;
             return month + ' ' + day + ', ' + year + ' ' + h + ':' + m;
         });
-        
+
         // Template
         var template = document.getElementById('show-template').innerHTML;
 
@@ -241,6 +241,6 @@
         // Insert rendered time
         document.getElementById('rendered-time').innerHTML = '<span>Compilation: ' + (compileEndTime - compileStartTime) + 'ms</span><span>Rendering: ' + (compiledRenderedTime - compileEndTime) + 'ms</span><span>Compilation + Rendering: ' + (compiledRenderedTime - compileStartTime) + 'ms</span>';
     </script>
-    
+
 </body>
 </html>
