@@ -2,7 +2,6 @@
     'use strict';
     var gulp = require('gulp'),
         connect = require('gulp-connect'),
-        eslint = require('gulp-eslint'),
         open = require('gulp-open'),
         rename = require('gulp-rename'),
         header = require('gulp-header'),
@@ -46,18 +45,7 @@
             }
         };
 
-    gulp.task('build', function (cb) {
-        gulp.src(paths.source + 'template7.js')
-            .pipe(sourcemaps.init())
-            .pipe(header(t7.banner, { pkg : t7.pkg, date: t7.date } ))
-            .pipe(jshint())
-            .pipe(jshint.reporter(stylish))
-            .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(paths.build))
-            .pipe(connect.reload());
-        cb();
-    });
-
+    // Build
     gulp.task('build', function (cb) {
         rollup({
             entry: './src/template7.js',
@@ -76,40 +64,71 @@
             cb();
         });
     });
-
+    function umd(cb) {
+      rollup({
+          entry: './src/template7.js',
+          plugins: [buble()],
+          format: 'umd',
+          moduleName: 'Template7',
+          useStrict: true,
+          sourceMap: true
+      })
+      .pipe(source('template7.js', './src'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(header(t7.banner, {
+          pkg: t7.pkg,
+          date: t7.date
+      }))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest('./dist/'))
+      .on('end', function () {
+          gulp.src('./dist/template7.js')
+              .pipe(sourcemaps.init())
+              .pipe(uglify())
+              .pipe(header(t7.banner, {
+                  pkg: t7.pkg,
+                  date: t7.date
+              }))
+              .pipe(rename('template7.min.js'))
+              .pipe(sourcemaps.write('./'))
+              .pipe(gulp.dest('./dist/'))
+              .on('end', function () {
+                  if (cb) cb();
+              });
+      });
+    }
+    function es(cb) {
+      rollup({
+        entry: './src/template7.js',
+        plugins: [buble()],
+        format: 'es',
+        moduleName: 'Template7',
+        useStrict: true,
+      })
+      .pipe(source('template7.js', './src'))
+      .pipe(buffer())
+      .pipe(header(t7.banner, {
+        pkg: t7.pkg,
+        date: t7.date
+      }))
+      .pipe(rename('template7.es2015.js'))
+      .pipe(gulp.dest('./dist/'))
+      .on('end', function () {
+        if (cb) cb();
+      });
+    }
+    // Dist
     gulp.task('dist', function (cb) {
-        rollup({
-            entry: './src/template7.js',
-            plugins: [buble()],
-            format: 'umd',
-            moduleName: 'Template7',
-            useStrict: true,
-            sourceMap: true
-        })
-        .pipe(source('template7.js', './src'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(header(t7.banner, {
-            pkg: t7.pkg,
-            date: t7.date
-        }))
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./dist/'))
-        .on('end', function () {
-            gulp.src('./dist/template7.js')
-                .pipe(sourcemaps.init())
-                .pipe(uglify())
-                .pipe(header(t7.banner, {
-                    pkg: t7.pkg,
-                    date: t7.date
-                }))
-                .pipe(rename('template7.min.js'))
-                .pipe(sourcemaps.write('./'))
-                .pipe(gulp.dest('./dist/'))
-                .on('end', function () {
-                    cb();
-                });
-        });
+      var cbs = 0;
+      umd(function () {
+        cbs += 1;
+        if (cbs === 2) cb();
+      });
+      es(function () {
+        cbs += 1;
+        if (cbs === 2) cb();
+      });
     });
 
     gulp.task('watch', function () {

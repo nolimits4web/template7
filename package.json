@@ -3,6 +3,8 @@
   "version": "1.2.0",
   "description": "Mobile-first HTML template engine",
   "main": "dist/template7.js",
+  "jsnext:main": "dist/template7.es2015.js",
+  "module": "dist/template7.es2015.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/nolimits4web/Template7.git"
@@ -41,7 +43,6 @@
     "eslint-plugin-react": "^6.10.3",
     "gulp": "^3.9.1",
     "gulp-connect": "^5.0.0",
-    "gulp-eslint": "^3.0.1",
     "gulp-header": "^1.8.8",
     "gulp-open": "^2.0.0",
     "gulp-rename": "^1.2.2",
