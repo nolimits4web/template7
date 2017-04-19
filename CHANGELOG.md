@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.2.1 - Released on April 19, 2017
+    * Added ES2015 module build
+
 ## Template7 v1.2.0 - Released on April 15, 2017
     * Added support for node.js and commonjs
 

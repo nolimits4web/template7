@@ -1,6 +1,6 @@
 {
   "name": "template7",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Mobile-first HTML template engine",
   "main": "dist/template7.js",
   "jsnext:main": "dist/template7.es2015.js",

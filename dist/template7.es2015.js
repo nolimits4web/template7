@@ -12,12 +12,6 @@
  * 
  * Released on: April 19, 2017
  */
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.Template7 = factory());
-}(this, (function () { 'use strict';
-
 var template7Context;
 if (typeof window !== 'undefined') {
   template7Context = window;
@@ -473,8 +467,4 @@ t7.options = Template7.prototype.options;
 t7.helpers = Template7.prototype.helpers;
 t7.partials = Template7.prototype.partials;
 
-return t7;
-
-})));
-
-//# sourceMappingURL=template7.js.map
+export default t7;
