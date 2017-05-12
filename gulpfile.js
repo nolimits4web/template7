@@ -21,7 +21,7 @@
         },
         t7 = {
             filename: 'template7',
-            pkg: require('./bower.json'),
+            pkg: require('./package.json'),
             banner: [
                 '/**',
                 ' * <%= pkg.name %> <%= pkg.version %>',
@@ -101,7 +101,6 @@
     function es(cb) {
       rollup({
         entry: './src/template7.js',
-        plugins: [buble()],
         format: 'es',
         moduleName: 'Template7',
         useStrict: true,
@@ -112,7 +111,7 @@
         pkg: t7.pkg,
         date: t7.date
       }))
-      .pipe(rename('template7.es2015.js'))
+      .pipe(rename('template7.module.js'))
       .pipe(gulp.dest('./dist/'))
       .on('end', function () {
         if (cb) cb();

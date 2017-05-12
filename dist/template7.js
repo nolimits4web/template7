@@ -1,6 +1,6 @@
 /**
- * Template7 1.2.1
- * Mobile-first JavaScript template engine
+ * template7 1.2.2
+ * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
  * 
@@ -10,7 +10,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: April 19, 2017
+ * Released on: May 12, 2017
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :

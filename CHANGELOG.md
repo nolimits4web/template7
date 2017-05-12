@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.2.2 - Released on May 12, 2017
+    * Fixed ES2015 module build to have ES 2015 syntax
+
 ## Template7 v1.2.1 - Released on April 19, 2017
     * Added ES2015 module build
 
