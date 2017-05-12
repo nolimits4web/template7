@@ -1,5 +1,5 @@
 /**
- * template7 1.2.2
+ * template7 1.2.3
  * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
