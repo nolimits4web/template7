@@ -187,6 +187,36 @@ function stringToBlocks(string) {
   }
   return blocks;
 }
+function parseJsVariable(expression, replace, object) {
+  return expression.split(/([+ -*/^])/g).map((part) => {
+    if (part.indexOf(replace) < 0) return part;
+    if (!object) return JSON.stringify('');
+    let variable = object;
+    if (part.indexOf(`${replace}.`) >= 0) {
+      part.split(`${replace}.`)[1].split('.').forEach((partName) => {
+        if (variable[partName]) variable = variable[partName];
+        else variable = 'undefined';
+      });
+    }
+    return JSON.stringify(variable);
+  }).join('');
+}
+function parseJsParents(expression, parents) {
+  return expression.split(/([+ -*^])/g).map((part) => {
+    if (part.indexOf('../') < 0) return part;
+    if (!parents || parents.length === 0) return JSON.stringify('');
+    const levelsUp = part.split('../').length - 1;
+    const parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
+
+    let variable = parentData;
+    const parentPart = part.replace(/..\//g, '');
+    parentPart.split('.').forEach((partName) => {
+      if (variable[partName]) variable = variable[partName];
+      else variable = 'undefined';
+    });
+    return JSON.stringify(variable);
+  }).join('');
+}
 class Template7 {
   constructor(template) {
     const t = this;
@@ -290,19 +320,29 @@ class Template7 {
         }
         // Helpers block
         if (block.type === 'helper') {
+          let parents;
+          if (ctx !== 'ctx_1') {
+            const level = ctx.split('_')[1];
+            let parentsString = `ctx_${level - 1}`;
+            for (let j = level - 2; j >= 1; j -= 1) {
+              parentsString += `, ctx_${j}`;
+            }
+            parents = `[${parentsString}]`;
+          } else {
+            parents = `[${ctx}]`;
+          }
           if (block.helperName in t.helpers) {
             compiledArguments = getCompiledArguments(block.contextName, ctx);
-
-            resultString += `r += (Template7.helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root});`;
+            resultString += `r += (Template7.helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
           } else if (block.contextName.length > 0) {
             throw new Error(`Template7: Missing helper: "${block.helperName}"`);
           } else {
             variable = getCompileVar(block.helperName, ctx);
             resultString += `if (${variable}) {`;
             resultString += `if (isArray(${variable})) {`;
-            resultString += `r += (Template7.helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root});`;
+            resultString += `r += (Template7.helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
             resultString += '}else {';
-            resultString += `r += (Template7.helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root});`;
+            resultString += `r += (Template7.helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
             resultString += '}}';
           }
         }
@@ -394,20 +434,60 @@ Template7.prototype = {
       return ctx.join(options.hash.delimiter || options.hash.delimeter);
     },
     js(expression, options) {
+      const data = options.data;
       let func;
-      if (expression.indexOf('return') >= 0) {
-        func = `(function(){${expression}})`;
+      let execute = expression;
+      ('index first last key').split(' ').forEach((prop) => {
+        if (typeof data[prop] !== 'undefined') {
+          const re1 = new RegExp(`this.@${prop}`, 'g');
+          const re2 = new RegExp(`@${prop}`, 'g');
+          execute = execute
+            .replace(re1, JSON.stringify(data[prop]))
+            .replace(re2, JSON.stringify(data[prop]));
+        }
+      });
+      if (options.root && execute.indexOf('@root') >= 0) {
+        execute = parseJsVariable(execute, '@root', options.root);
+      }
+      if (execute.indexOf('@global') >= 0) {
+        execute = parseJsVariable(execute, '@global', template7Context.Template7.global);
+      }
+      if (execute.indexOf('../') >= 0) {
+        execute = parseJsParents(execute, options.parents);
+      }
+      if (execute.indexOf('return') >= 0) {
+        func = `(function(){${execute}})`;
       } else {
-        func = `(function(){return (${expression})})`;
+        func = `(function(){return (${execute})})`;
       }
       return eval.call(this, func).call(this);
     },
-    js_compare(expression, options) {
+    js_if(expression, options) {
+      const data = options.data;
       let func;
-      if (expression.indexOf('return') >= 0) {
-        func = `(function(){${expression}})`;
+      let execute = expression;
+      ('index first last key').split(' ').forEach((prop) => {
+        if (typeof data[prop] !== 'undefined') {
+          const re1 = new RegExp(`this.@${prop}`, 'g');
+          const re2 = new RegExp(`@${prop}`, 'g');
+          execute = execute
+            .replace(re1, JSON.stringify(data[prop]))
+            .replace(re2, JSON.stringify(data[prop]));
+        }
+      });
+      if (options.root && execute.indexOf('@root') >= 0) {
+        execute = parseJsVariable(execute, '@root', options.root);
+      }
+      if (execute.indexOf('@global') >= 0) {
+        execute = parseJsVariable(execute, '@global', Template7.global);
+      }
+      if (execute.indexOf('../') >= 0) {
+        execute = parseJsParents(execute, options.parents);
+      }
+      if (execute.indexOf('return') >= 0) {
+        func = `(function(){${execute}})`;
       } else {
-        func = `(function(){return (${expression})})`;
+        func = `(function(){return (${execute})})`;
       }
       const condition = eval.call(this, func).call(this);
       if (condition) {
@@ -418,6 +498,7 @@ Template7.prototype = {
     },
   },
 };
+Template7.prototype.helpers.js_compare = Template7.prototype.helpers.js_if;
 function t7(template, data) {
   if (arguments.length === 2) {
     let instance = new Template7(template);
