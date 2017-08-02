@@ -197,8 +197,8 @@ class Template7 {
       let parts;
       let levelsUp = 0;
       if (name.indexOf('../') === 0) {
-        const newDepth = variable.split('_')[1] - levelsUp;
         levelsUp = name.split('../').length - 1;
+        const newDepth = variable.split('_')[1] - levelsUp;
         variable = `ctx_${newDepth >= 1 ? newDepth : 1}`;
         parts = name.split('../')[levelsUp].split('.');
       } else if (name.indexOf('@global') === 0) {
