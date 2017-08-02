@@ -222,13 +222,14 @@ class Template7 {
     const t = this;
     t.template = template;
 
-    function getCompileVar(name, ctx) {
+    function getCompileVar(name, ctx, data = 'data_1') {
       let variable = ctx;
       let parts;
       let levelsUp = 0;
+      let newDepth;
       if (name.indexOf('../') === 0) {
         levelsUp = name.split('../').length - 1;
-        const newDepth = variable.split('_')[1] - levelsUp;
+        newDepth = variable.split('_')[1] - levelsUp;
         variable = `ctx_${newDepth >= 1 ? newDepth : 1}`;
         parts = name.split('../')[levelsUp].split('.');
       } else if (name.indexOf('@global') === 0) {
@@ -243,10 +244,14 @@ class Template7 {
       for (let i = 0; i < parts.length; i += 1) {
         const part = parts[i];
         if (part.indexOf('@') === 0) {
+          let dataLevel = data.split('_')[1];
+          if (levelsUp > 0) {
+            dataLevel = newDepth;
+          }
           if (i > 0) {
-            variable += `[(data && data.${part.replace('@', '')})]`;
+            variable += `[(data_${dataLevel} && data_${dataLevel}.${part.replace('@', '')})]`;
           } else {
-            variable = `(data && data.${name.replace('@', '')})`;
+            variable = `(data_${dataLevel} && data_${dataLevel}.${part.replace('@', '')})`;
           }
         } else if (isFinite(part)) {
           variable += `[${part}]`;
@@ -256,16 +261,15 @@ class Template7 {
           variable += `.${part}`;
         }
       }
-
       return variable;
     }
-    function getCompiledArguments(contextArray, ctx) {
+    function getCompiledArguments(contextArray, ctx, data) {
       const arr = [];
       for (let i = 0; i < contextArray.length; i += 1) {
         if (/^['"]/.test(contextArray[i])) arr.push(contextArray[i]);
         else if (/^(true|false|\d+)$/.test(contextArray[i])) arr.push(contextArray[i]);
         else {
-          arr.push(getCompileVar(contextArray[i], ctx));
+          arr.push(getCompileVar(contextArray[i], ctx, data));
         }
       }
 
@@ -277,6 +281,7 @@ class Template7 {
       }
       const blocks = stringToBlocks(template);
       const ctx = `ctx_${depth}`;
+      const data = `data_${depth}`;
       if (blocks.length === 0) {
         return function empty() { return ''; };
       }
@@ -292,9 +297,9 @@ class Template7 {
 
       let resultString = '';
       if (depth === 1) {
-        resultString += `(function (${ctx}, data, root) {\n`;
+        resultString += `(function (${ctx}, ${data}, root) {\n`;
       } else {
-        resultString += `(function (${ctx}, data) {\n`;
+        resultString += `(function (${ctx}, ${data}) {\n`;
       }
       if (depth === 1) {
         resultString += 'function isArray(arr){return Object.prototype.toString.apply(arr) === \'[object Array]\';}\n';
@@ -315,7 +320,7 @@ class Template7 {
         let compiledArguments;
         // Variable block
         if (block.type === 'variable') {
-          variable = getCompileVar(block.contextName, ctx);
+          variable = getCompileVar(block.contextName, ctx, data);
           resultString += `r += c(${variable}, ${ctx});`;
         }
         // Helpers block
@@ -332,17 +337,17 @@ class Template7 {
             parents = `[${ctx}]`;
           }
           if (block.helperName in t.helpers) {
-            compiledArguments = getCompiledArguments(block.contextName, ctx);
-            resultString += `r += (Template7.helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+            compiledArguments = getCompiledArguments(block.contextName, ctx, data);
+            resultString += `r += (Template7.helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
           } else if (block.contextName.length > 0) {
             throw new Error(`Template7: Missing helper: "${block.helperName}"`);
           } else {
-            variable = getCompileVar(block.helperName, ctx);
+            variable = getCompileVar(block.helperName, ctx, data);
             resultString += `if (${variable}) {`;
             resultString += `if (isArray(${variable})) {`;
-            resultString += `r += (Template7.helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+            resultString += `r += (Template7.helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
             resultString += '}else {';
-            resultString += `r += (Template7.helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: data || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+            resultString += `r += (Template7.helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
             resultString += '}}';
           }
         }
