@@ -24,7 +24,7 @@
             pkg: require('./package.json'),
             banner: [
                 '/**',
-                ' * <%= pkg.name %> <%= pkg.version %>',
+                ' * Template7 <%= pkg.version %>',
                 ' * <%= pkg.description %>',
                 ' * ',
                 ' * <%= pkg.homepage %>',
