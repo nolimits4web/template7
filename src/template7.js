@@ -364,7 +364,7 @@ class Template7 {
   }
 }
 
-Template7.prototype = {
+Object.assign(Template7.prototype, {
   options: {},
   partials: {},
   helpers: {
@@ -502,7 +502,8 @@ Template7.prototype = {
       return options.inverse(this, options.data);
     },
   },
-};
+});
+
 Template7.prototype.helpers.js_compare = Template7.prototype.helpers.js_if;
 function t7(template, data) {
   if (arguments.length === 2) {
