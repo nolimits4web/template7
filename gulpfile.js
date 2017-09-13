@@ -131,7 +131,7 @@
     });
 
     gulp.task('watch', function () {
-        gulp.watch(paths.source + 'template7.js', [ 'build' ]);
+        gulp.watch('./src/*.js', [ 'build' ]);
     });
 
     gulp.task('connect', function () {
