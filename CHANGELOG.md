@@ -1,5 +1,9 @@
 # Change Log
 
+## Template7 v1.3.0 - Released on September 13, 2017
+  * Small performance improvements with decreased number of `eval` calls
+  * Source-code restructure into more ES-next modules
+
 ## Template7 v1.2.5 - Released on August 2, 2017
   * `js_compare` helper has been renamed to `js_if` helper. `js_compare` is still available for backwards compatibility
   * Added support for `@index`, `@first`, `@last`, `@key`, `@root`, `@global` variables to `js` and `js_if` helpers
