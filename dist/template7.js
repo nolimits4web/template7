@@ -1,5 +1,5 @@
 /**
- * Template7 1.3.0
+ * Template7 1.3.1
  * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
@@ -10,7 +10,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: September 13, 2017
+ * Released on: October 25, 2017
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -47,7 +47,7 @@ var Template7Utils = {
   helperToSlices: function helperToSlices(string) {
     var quoteDoubleRexExp = Template7Utils.quoteDoubleRexExp;
     var quoteSingleRexExp = Template7Utils.quoteSingleRexExp;
-    var helperParts = string.replace(/[{}#}]/g, '').split(' ');
+    var helperParts = string.replace(/[{}#}]/g, '').trim().split(' ');
     var slices = [];
     var shiftIndex;
     var i;
@@ -124,6 +124,9 @@ var Template7Utils = {
         if (block.indexOf('{/') >= 0) {
           continue;
         }
+        block = block
+          .replace(/{{([#/])*([ ])*/, '{{$1')
+          .replace(/([ ])*}}/, '}}');
         if (block.indexOf('{#') < 0 && block.indexOf(' ') < 0 && block.indexOf('else') < 0) {
           // Simple variable
           blocks.push({
@@ -187,14 +190,21 @@ var Template7Utils = {
           }
           if (foundClosed) {
             if (shiftIndex) { i = shiftIndex; }
-            blocks.push({
-              type: 'helper',
-              helperName: helperName,
-              contextName: helperContext,
-              content: helperContent,
-              inverseContent: elseContent,
-              hash: helperHash,
-            });
+            if (helperName === 'raw') {
+              blocks.push({
+                type: 'plain',
+                content: helperContent,
+              });
+            } else {
+              blocks.push({
+                type: 'helper',
+                helperName: helperName,
+                contextName: helperContext,
+                content: helperContent,
+                inverseContent: elseContent,
+                hash: helperHash,
+              });
+            }
           }
         } else if (block.indexOf(' ') > 0) {
           if (isPartial) {

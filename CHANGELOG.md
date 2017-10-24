@@ -1,5 +1,10 @@
 # Change Log
 
+## Template7 v1.3.1 - Released on October 25, 2017
+  * Added new `{{#raw}}...{{/raw}}` block helper to bypass template compilation inside of this block
+  * Less strict rules for spaces inside of expressions. Expressions like `{{ name }}` works now as expected
+  * ES-module package renamed from `template7.module.js` to `template7.esm.js`
+
 ## Template7 v1.3.0 - Released on September 13, 2017
   * Small performance improvements with decreased number of `eval` calls
   * Source-code restructure into more ES-next modules
