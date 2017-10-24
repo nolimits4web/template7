@@ -109,7 +109,7 @@ function es(cb) {
       pkg: t7.pkg,
       date: t7.date,
     }))
-    .pipe(rename('template7.module.js'))
+    .pipe(rename('template7.esm.js'))
     .pipe(gulp.dest('./dist/'))
     .on('end', () => {
       if (cb) cb();
