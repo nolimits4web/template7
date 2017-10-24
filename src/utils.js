@@ -17,7 +17,7 @@ const Template7Utils = {
   },
   helperToSlices(string) {
     const { quoteDoubleRexExp, quoteSingleRexExp } = Template7Utils;
-    const helperParts = string.replace(/[{}#}]/g, '').split(' ');
+    const helperParts = string.replace(/[{}#}]/g, '').trim().split(' ');
     const slices = [];
     let shiftIndex;
     let i;
@@ -83,7 +83,7 @@ const Template7Utils = {
     if (!string) return [];
     const stringBlocks = string.split(/({{[^{^}]*}})/);
     for (i = 0; i < stringBlocks.length; i += 1) {
-      const block = stringBlocks[i];
+      let block = stringBlocks[i];
       if (block === '') continue;
       if (block.indexOf('{{') < 0) {
         blocks.push({
@@ -94,6 +94,9 @@ const Template7Utils = {
         if (block.indexOf('{/') >= 0) {
           continue;
         }
+        block = block
+          .replace(/{{([#/])*([ ])*/, '{{$1')
+          .replace(/([ ])*}}/, '}}');
         if (block.indexOf('{#') < 0 && block.indexOf(' ') < 0 && block.indexOf('else') < 0) {
           // Simple variable
           blocks.push({
@@ -157,14 +160,21 @@ const Template7Utils = {
           }
           if (foundClosed) {
             if (shiftIndex) i = shiftIndex;
-            blocks.push({
-              type: 'helper',
-              helperName,
-              contextName: helperContext,
-              content: helperContent,
-              inverseContent: elseContent,
-              hash: helperHash,
-            });
+            if (helperName === 'raw') {
+              blocks.push({
+                type: 'plain',
+                content: helperContent,
+              });
+            } else {
+              blocks.push({
+                type: 'helper',
+                helperName,
+                contextName: helperContext,
+                content: helperContent,
+                inverseContent: elseContent,
+                hash: helperHash,
+              });
+            }
           }
         } else if (block.indexOf(' ') > 0) {
           if (isPartial) {
