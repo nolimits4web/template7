@@ -4,6 +4,8 @@
 Template7
 =========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/nolimits4web/Template7.svg)](https://greenkeeper.io/)
+
 JavaScript template engine with syntax similar to Handlebars.
 
 Template7 is the default template engine in [Framework7](http://idangero.us/framework7/), but also can be used separately.
