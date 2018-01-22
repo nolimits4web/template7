@@ -9,6 +9,7 @@ const rollup = require('rollup-stream');
 const buble = require('rollup-plugin-buble');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
+const pkg = require('./package.json');
 
 const paths = {
   root: './',
@@ -19,7 +20,7 @@ const paths = {
 };
 const t7 = {
   filename: 'template7',
-  pkg: require('./package.json'),
+  pkg,
   banner: [
     '/**',
     ' * Template7 <%= pkg.version %>',
@@ -31,7 +32,7 @@ const t7 = {
     ' * The iDangero.us',
     ' * http://www.idangero.us/',
     ' * ',
-    ' * Licensed under <%= pkg.license.join(" & ") %>',
+    ' * Licensed under <%= pkg.license %>',
     ' * ',
     ' * Released on: <%= date.month %> <%= date.day %>, <%= date.year %>',
     ' */',
@@ -53,15 +54,16 @@ gulp.task('build', (cb) => {
     strict: true,
     sourcemap: true,
   })
-      .pipe(source('template7.js', './src'))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({ loadMaps: true }))
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./build/'))
-      .on('end', () => {
-        cb();
-      });
+    .pipe(source('template7.js', './src'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({ loadMaps: true }))
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest('./build/'))
+    .on('end', () => {
+      cb();
+    });
 });
+
 function umd(cb) {
   rollup({
     input: './src/template7.js',
@@ -82,18 +84,18 @@ function umd(cb) {
     .pipe(gulp.dest('./dist/'))
     .on('end', () => {
       gulp.src('./dist/template7.js')
-            .pipe(sourcemaps.init())
-            .pipe(uglify())
-            .pipe(header(t7.banner, {
-              pkg: t7.pkg,
-              date: t7.date,
-            }))
-            .pipe(rename('template7.min.js'))
-            .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest('./dist/'))
-            .on('end', () => {
-              if (cb) cb();
-            });
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(header(t7.banner, {
+          pkg: t7.pkg,
+          date: t7.date,
+        }))
+        .pipe(rename('template7.min.js'))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest('./dist/'))
+        .on('end', () => {
+          if (cb) cb();
+        });
     });
 }
 function es(cb) {
