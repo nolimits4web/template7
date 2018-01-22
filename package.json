@@ -7,7 +7,7 @@
   "module": "dist/template7.esm.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nolimits4web/Template7.git"
+    "url": "https://github.com/nolimits4web/template7.git"
   },
   "keywords": [
     "mobile",
@@ -26,7 +26,7 @@
   "author": "Vladimir Kharlampidi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nolimits4web/Template7/issues"
+    "url": "https://github.com/nolimits4web/template7/issues"
   },
   "homepage": "http://www.idangero.us/template7/",
   "engines": {
