@@ -24,9 +24,7 @@
     "mustache"
   ],
   "author": "Vladimir Kharlampidi",
-  "license": [
-    "MIT"
-  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nolimits4web/Template7/issues"
   },
@@ -35,20 +33,20 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^14.1.0",
-    "eslint-config-airbnb-base": "^11.3.2",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.10.3",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
     "gulp": "^3.9.1",
     "gulp-connect": "^5.0.0",
     "gulp-header": "^1.8.9",
     "gulp-open": "^2.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^2.6.1",
-    "gulp-uglify": "^2.1.2",
-    "rollup-plugin-buble": "^0.15.0",
+    "gulp-uglify": "^3.0.0",
+    "rollup-plugin-buble": "^0.16.0",
     "rollup-stream": "^1.24.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
