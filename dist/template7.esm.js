@@ -1,16 +1,16 @@
 /**
- * Template7 1.3.1
+ * Template7 1.3.5
  * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
  * 
- * Copyright 2017, Vladimir Kharlampidi
+ * Copyright 2018, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  * 
  * Licensed under MIT
  * 
- * Released on: October 25, 2017
+ * Released on: January 22, 2018
  */
 let t7ctx;
 if (typeof window !== 'undefined') {
@@ -202,7 +202,10 @@ const Template7Utils = {
         } else if (block.indexOf(' ') > 0) {
           if (isPartial) {
             helperName = '_partial';
-            if (helperContext[0]) helperContext[0] = `"${helperContext[0].replace(/"|'/g, '')}"`;
+            if (helperContext[0]) {
+              if (helperContext[0].indexOf('[') === 0) helperContext[0] = helperContext[0].replace(/[[\]]/g, '');
+              else helperContext[0] = `"${helperContext[0].replace(/"|'/g, '')}"`;
+            }
           }
           blocks.push({
             type: 'helper',
@@ -276,7 +279,7 @@ const Template7Utils = {
         } else {
           variable = `(data_${dataLevel} && data_${dataLevel}.${part.replace('@', '')})`;
         }
-      } else if (isFinite(part)) {
+      } else if (Number.isFinite ? Number.isFinite(part) : Template7Context.isFinite(part)) {
         variable += `[${part}]`;
       } else if (part === 'this' || part.indexOf('this.') >= 0 || part.indexOf('this[') >= 0 || part.indexOf('this(') >= 0) {
         variable = part.replace('this', ctx);
@@ -300,17 +303,18 @@ const Template7Utils = {
   },
 };
 
+/* eslint no-eval: "off" */
 const Template7Helpers = {
   _partial(partialName, options) {
+    const ctx = this;
     const p = Template7Class.partials[partialName];
     if (!p || (p && !p.template)) return '';
     if (!p.compiled) {
       p.compiled = new Template7Class(p.template).compile();
     }
-    const ctx = this;
-    for (const hashName in options.hash) {
+    Object.keys(options.hash).forEach((hashName) => {
       ctx[hashName] = options.hash[hashName];
-    }
+    });
     return p.compiled(ctx, options.data, options.root);
   },
   escape(context) {
@@ -353,6 +357,7 @@ const Template7Helpers = {
         ctx = ctx.reverse();
       }
     } else {
+      // eslint-disable-next-line
       for (const key in ctx) {
         i += 1;
         ret += options.fn(ctx[key], { key });
@@ -398,7 +403,7 @@ const Template7Helpers = {
     } else {
       func = `(function(){return (${execute})})`;
     }
-    return eval.call(this, func).call(this);
+    return eval(func).call(this);
   },
   js_if(expression, options) {
     const data = options.data;
@@ -427,7 +432,7 @@ const Template7Helpers = {
     } else {
       func = `(function(){return (${execute})})`;
     }
-    const condition = eval.call(this, func).call(this);
+    const condition = eval(func).call(this);
     if (condition) {
       return options.fn(this, options.data);
     }
@@ -490,6 +495,7 @@ class Template7Class {
       const block = blocks[i];
       // Plain block
       if (block.type === 'plain') {
+        // eslint-disable-next-line
         resultString += `r +='${(block.content).replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'')}';`;
         continue;
       }
@@ -513,18 +519,23 @@ class Template7Class {
         } else {
           parents = `[${ctx}]`;
         }
-        if (block.helperName in Template7Helpers) {
+        let dynamicHelper;
+        if (block.helperName.indexOf('[') === 0) {
+          block.helperName = getCompileVar(block.helperName.replace(/[[\]]/g, ''), ctx, data);
+          dynamicHelper = true;
+        }
+        if (dynamicHelper || block.helperName in Template7Helpers) {
           compiledArguments = getCompiledArguments(block.contextName, ctx, data);
-          resultString += `r += (Template7.helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+          resultString += `r += (Template7Helpers${dynamicHelper ? `[${block.helperName}]` : `.${block.helperName}`}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
         } else if (block.contextName.length > 0) {
           throw new Error(`Template7: Missing helper: "${block.helperName}"`);
         } else {
           variable = getCompileVar(block.helperName, ctx, data);
           resultString += `if (${variable}) {`;
           resultString += `if (isArray(${variable})) {`;
-          resultString += `r += (Template7.helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+          resultString += `r += (Template7Helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
           resultString += '}else {';
-          resultString += `r += (Template7.helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+          resultString += `r += (Template7Helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
           resultString += '}}';
         }
       }
@@ -532,7 +543,8 @@ class Template7Class {
     resultString += '\nreturn r;})';
 
     if (depth === 1) {
-      t.compiled = eval.call(Template7Context, resultString);
+      // eslint-disable-next-line
+      t.compiled = eval(resultString);
       return t.compiled;
     }
     return resultString;

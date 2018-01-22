@@ -1,5 +1,9 @@
 # Change Log
 
+## Template7 v1.3.5 - Released on January 22, 2018
+  * Fixed helpers access when used as ES module
+  * Added support for dynamic helper names and partials by encapsulating their names in `[]` square brackets
+
 ## Template7 v1.3.1 - Released on October 25, 2017
   * Added new `{{#raw}}...{{/raw}}` block helper to bypass template compilation inside of this block
   * Less strict rules for spaces inside of expressions. Expressions like `{{ name }}` works now as expected
