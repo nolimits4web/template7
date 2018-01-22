@@ -253,7 +253,7 @@ const Template7Utils = {
         } else {
           variable = `(data_${dataLevel} && data_${dataLevel}.${part.replace('@', '')})`;
         }
-      } else if (isFinite(part)) {
+      } else if (Number.isFinite ? Number.isFinite(part) : Template7Context.isFinite(part)) {
         variable += `[${part}]`;
       } else if (part === 'this' || part.indexOf('this.') >= 0 || part.indexOf('this[') >= 0 || part.indexOf('this(') >= 0) {
         variable = part.replace('this', ctx);

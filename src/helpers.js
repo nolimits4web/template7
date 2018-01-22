@@ -1,3 +1,4 @@
+/* eslint no-eval: "off" */
 import Template7Utils from './utils';
 import Template7Class from './template7-class';
 import Template7Context from './context';
@@ -10,9 +11,9 @@ const Template7Helpers = {
       p.compiled = new Template7Class(p.template).compile();
     }
     const ctx = this;
-    for (const hashName in options.hash) {
+    Object.keys(options.hash).forEach((hashName) => {
       ctx[hashName] = options.hash[hashName];
-    }
+    });
     return p.compiled(ctx, options.data, options.root);
   },
   escape(context) {
@@ -55,6 +56,7 @@ const Template7Helpers = {
         ctx = ctx.reverse();
       }
     } else {
+      // eslint-disable-next-line
       for (const key in ctx) {
         i += 1;
         ret += options.fn(ctx[key], { key });
@@ -100,7 +102,7 @@ const Template7Helpers = {
     } else {
       func = `(function(){return (${execute})})`;
     }
-    return eval.call(this, func).call(this);
+    return eval(func).call(this);
   },
   js_if(expression, options) {
     const data = options.data;
@@ -129,7 +131,7 @@ const Template7Helpers = {
     } else {
       func = `(function(){return (${execute})})`;
     }
-    const condition = eval.call(this, func).call(this);
+    const condition = eval(func).call(this);
     if (condition) {
       return options.fn(this, options.data);
     }

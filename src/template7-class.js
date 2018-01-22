@@ -55,6 +55,7 @@ class Template7Class {
       const block = blocks[i];
       // Plain block
       if (block.type === 'plain') {
+        // eslint-disable-next-line
         resultString += `r +='${(block.content).replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'')}';`;
         continue;
       }
@@ -80,16 +81,16 @@ class Template7Class {
         }
         if (block.helperName in Template7Helpers) {
           compiledArguments = getCompiledArguments(block.contextName, ctx, data);
-          resultString += `r += (Template7.helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+          resultString += `r += (Template7Helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
         } else if (block.contextName.length > 0) {
           throw new Error(`Template7: Missing helper: "${block.helperName}"`);
         } else {
           variable = getCompileVar(block.helperName, ctx, data);
           resultString += `if (${variable}) {`;
           resultString += `if (isArray(${variable})) {`;
-          resultString += `r += (Template7.helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+          resultString += `r += (Template7Helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
           resultString += '}else {';
-          resultString += `r += (Template7.helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+          resultString += `r += (Template7Helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
           resultString += '}}';
         }
       }
@@ -97,7 +98,8 @@ class Template7Class {
     resultString += '\nreturn r;})';
 
     if (depth === 1) {
-      t.compiled = eval.call(Template7Context, resultString);
+      // eslint-disable-next-line
+      t.compiled = eval(resultString);
       return t.compiled;
     }
     return resultString;
