@@ -4,6 +4,7 @@ module.exports = {
       "import"
   ],
   "rules": {
+    "prefer-destructuring": ["off"],
     "no-continue": ["off"],
     "max-len": ["error", 1000, 2, {
       ignoreUrls: true,
