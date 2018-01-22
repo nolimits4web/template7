@@ -9,6 +9,10 @@
     "type": "git",
     "url": "https://github.com/nolimits4web/template7.git"
   },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "gulp dist && npm run lint"
+  },
   "keywords": [
     "mobile",
     "template",
