@@ -79,9 +79,14 @@ class Template7Class {
         } else {
           parents = `[${ctx}]`;
         }
-        if (block.helperName in Template7Helpers) {
+        let dynamicHelper;
+        if (block.helperName.indexOf('[') === 0) {
+          block.helperName = getCompileVar(block.helperName.replace(/[[\]]/g, ''), ctx, data);
+          dynamicHelper = true;
+        }
+        if (dynamicHelper || block.helperName in Template7Helpers) {
           compiledArguments = getCompiledArguments(block.contextName, ctx, data);
-          resultString += `r += (Template7Helpers.${block.helperName}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
+          resultString += `r += (Template7Helpers${dynamicHelper ? `[${block.helperName}]` : `.${block.helperName}`}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
         } else if (block.contextName.length > 0) {
           throw new Error(`Template7: Missing helper: "${block.helperName}"`);
         } else {

@@ -5,12 +5,12 @@ import Template7Context from './context';
 
 const Template7Helpers = {
   _partial(partialName, options) {
+    const ctx = this;
     const p = Template7Class.partials[partialName];
     if (!p || (p && !p.template)) return '';
     if (!p.compiled) {
       p.compiled = new Template7Class(p.template).compile();
     }
-    const ctx = this;
     Object.keys(options.hash).forEach((hashName) => {
       ctx[hashName] = options.hash[hashName];
     });

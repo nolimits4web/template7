@@ -179,7 +179,10 @@ const Template7Utils = {
         } else if (block.indexOf(' ') > 0) {
           if (isPartial) {
             helperName = '_partial';
-            if (helperContext[0]) helperContext[0] = `"${helperContext[0].replace(/"|'/g, '')}"`;
+            if (helperContext[0]) {
+              if (helperContext[0].indexOf('[') === 0) helperContext[0] = helperContext[0].replace(/[[\]]/g, '');
+              else helperContext[0] = `"${helperContext[0].replace(/"|'/g, '')}"`;
+            }
           }
           blocks.push({
             type: 'helper',
