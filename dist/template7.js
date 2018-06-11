@@ -1,5 +1,5 @@
 /**
- * Template7 1.3.5
+ * Template7 1.3.6
  * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
@@ -10,7 +10,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: January 22, 2018
+ * Released on: June 11, 2018
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -232,11 +232,15 @@ var Template7Utils = {
       var variable = object;
       if (part.indexOf((replace + ".")) >= 0) {
         part.split((replace + "."))[1].split('.').forEach(function (partName) {
-          if (variable[partName]) { variable = variable[partName]; }
-          else { variable = 'undefined'; }
+          if (partName in variable) { variable = variable[partName]; }
+          else { variable = undefined; }
         });
       }
-      return JSON.stringify(variable);
+      if (typeof variable === 'string') {
+        variable = JSON.stringify(variable);
+      }
+      if (variable === undefined) { variable = 'undefined'; }
+      return variable;
     }).join('');
   },
   parseJsParents: function parseJsParents(expression, parents) {
@@ -431,7 +435,7 @@ var Template7Helpers = {
       execute = Template7Utils.parseJsVariable(execute, '@root', options.root);
     }
     if (execute.indexOf('@global') >= 0) {
-      execute = Template7Utils.parseJsVariable(execute, '@global', Template7Class.global);
+      execute = Template7Utils.parseJsVariable(execute, '@global', Template7Context.Template7.global);
     }
     if (execute.indexOf('../') >= 0) {
       execute = Template7Utils.parseJsParents(execute, options.parents);

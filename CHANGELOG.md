@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.3.6 - Released on June 11, 2018
+  * Better `@global` parsing in `js` and `js_if` helpers
+
 ## Template7 v1.3.5 - Released on January 22, 2018
   * Fixed helpers access when used as ES module
   * Added support for dynamic helper names and partials by encapsulating their names in `[]` square brackets
