@@ -121,7 +121,7 @@ const Template7Helpers = {
       execute = Template7Utils.parseJsVariable(execute, '@root', options.root);
     }
     if (execute.indexOf('@global') >= 0) {
-      execute = Template7Utils.parseJsVariable(execute, '@global', Template7Class.global);
+      execute = Template7Utils.parseJsVariable(execute, '@global', Template7Context.Template7.global);
     }
     if (execute.indexOf('../') >= 0) {
       execute = Template7Utils.parseJsParents(execute, options.parents);

@@ -202,11 +202,15 @@ const Template7Utils = {
       let variable = object;
       if (part.indexOf(`${replace}.`) >= 0) {
         part.split(`${replace}.`)[1].split('.').forEach((partName) => {
-          if (variable[partName]) variable = variable[partName];
-          else variable = 'undefined';
+          if (partName in variable) variable = variable[partName];
+          else variable = undefined;
         });
       }
-      return JSON.stringify(variable);
+      if (typeof variable === 'string') {
+        variable = JSON.stringify(variable);
+      }
+      if (variable === undefined) variable = 'undefined';
+      return variable;
     }).join('');
   },
   parseJsParents(expression, parents) {
