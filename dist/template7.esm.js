@@ -1,3 +1,13 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /**
  * Template7 1.3.6
  * Mobile-first HTML template engine
@@ -12,7 +22,7 @@
  * 
  * Released on: June 11, 2018
  */
-let t7ctx;
+var t7ctx = void 0;
 if (typeof window !== 'undefined') {
   t7ctx = window;
 } else if (typeof global !== 'undefined') {
@@ -21,36 +31,31 @@ if (typeof window !== 'undefined') {
   t7ctx = undefined;
 }
 
-const Template7Context = t7ctx;
+var Template7Context = t7ctx;
 
-const Template7Utils = {
+var Template7Utils = {
   quoteSingleRexExp: new RegExp('\'', 'g'),
   quoteDoubleRexExp: new RegExp('"', 'g'),
-  isFunction(func) {
+  isFunction: function isFunction(func) {
     return typeof func === 'function';
   },
-  escape(string) {
-    return (typeof Template7Context !== 'undefined' && Template7Context.escape) ?
-      Template7Context.escape(string) :
-      string
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+  escape: function escape(string) {
+    return typeof Template7Context !== 'undefined' && Template7Context.escape ? Template7Context.escape(string) : string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   },
-  helperToSlices(string) {
-    const { quoteDoubleRexExp, quoteSingleRexExp } = Template7Utils;
-    const helperParts = string.replace(/[{}#}]/g, '').trim().split(' ');
-    const slices = [];
-    let shiftIndex;
-    let i;
-    let j;
+  helperToSlices: function helperToSlices(string) {
+    var quoteDoubleRexExp = Template7Utils.quoteDoubleRexExp,
+        quoteSingleRexExp = Template7Utils.quoteSingleRexExp;
+
+    var helperParts = string.replace(/[{}#}]/g, '').trim().split(' ');
+    var slices = [];
+    var shiftIndex = void 0;
+    var i = void 0;
+    var j = void 0;
     for (i = 0; i < helperParts.length; i += 1) {
-      let part = helperParts[i];
-      let blockQuoteRegExp;
-      let openingQuote;
-      if (i === 0) slices.push(part);
-      else if (part.indexOf('"') === 0 || part.indexOf('\'') === 0) {
+      var part = helperParts[i];
+      var blockQuoteRegExp = void 0;
+      var openingQuote = void 0;
+      if (i === 0) slices.push(part);else if (part.indexOf('"') === 0 || part.indexOf('\'') === 0) {
         blockQuoteRegExp = part.indexOf('"') === 0 ? quoteDoubleRexExp : quoteSingleRexExp;
         openingQuote = part.indexOf('"') === 0 ? '"' : '\'';
         // Plain String
@@ -61,7 +66,7 @@ const Template7Utils = {
           // Find closed Index
           shiftIndex = 0;
           for (j = i + 1; j < helperParts.length; j += 1) {
-            part += ` ${helperParts[j]}`;
+            part += ' ' + helperParts[j];
             if (helperParts[j].indexOf(openingQuote) >= 0) {
               shiftIndex = j;
               slices.push(part);
@@ -72,9 +77,9 @@ const Template7Utils = {
         }
       } else if (part.indexOf('=') > 0) {
         // Hash
-        const hashParts = part.split('=');
-        const hashName = hashParts[0];
-        let hashContent = hashParts[1];
+        var hashParts = part.split('=');
+        var hashName = hashParts[0];
+        var hashContent = hashParts[1];
         if (!blockQuoteRegExp) {
           blockQuoteRegExp = hashContent.indexOf('"') === 0 ? quoteDoubleRexExp : quoteSingleRexExp;
           openingQuote = hashContent.indexOf('"') === 0 ? '"' : '\'';
@@ -82,7 +87,7 @@ const Template7Utils = {
         if (hashContent.match(blockQuoteRegExp).length !== 2) {
           shiftIndex = 0;
           for (j = i + 1; j < helperParts.length; j += 1) {
-            hashContent += ` ${helperParts[j]}`;
+            hashContent += ' ' + helperParts[j];
             if (helperParts[j].indexOf(openingQuote) >= 0) {
               shiftIndex = j;
               break;
@@ -90,7 +95,7 @@ const Template7Utils = {
           }
           if (shiftIndex) i = shiftIndex;
         }
-        const hash = [hashName, hashContent.replace(blockQuoteRegExp, '')];
+        var hash = [hashName, hashContent.replace(blockQuoteRegExp, '')];
         slices.push(hash);
       } else {
         // Plain variable
@@ -99,43 +104,41 @@ const Template7Utils = {
     }
     return slices;
   },
-  stringToBlocks(string) {
-    const blocks = [];
-    let i;
-    let j;
+  stringToBlocks: function stringToBlocks(string) {
+    var blocks = [];
+    var i = void 0;
+    var j = void 0;
     if (!string) return [];
-    const stringBlocks = string.split(/({{[^{^}]*}})/);
+    var stringBlocks = string.split(/({{[^{^}]*}})/);
     for (i = 0; i < stringBlocks.length; i += 1) {
-      let block = stringBlocks[i];
+      var block = stringBlocks[i];
       if (block === '') continue;
       if (block.indexOf('{{') < 0) {
         blocks.push({
           type: 'plain',
-          content: block,
+          content: block
         });
       } else {
         if (block.indexOf('{/') >= 0) {
           continue;
         }
-        block = block
-          .replace(/{{([#/])*([ ])*/, '{{$1')
-          .replace(/([ ])*}}/, '}}');
+        block = block.replace(/{{([#/])*([ ])*/, '{{$1').replace(/([ ])*}}/, '}}');
         if (block.indexOf('{#') < 0 && block.indexOf(' ') < 0 && block.indexOf('else') < 0) {
           // Simple variable
           blocks.push({
             type: 'variable',
-            contextName: block.replace(/[{}]/g, ''),
+            contextName: block.replace(/[{}]/g, '')
           });
           continue;
         }
         // Helpers
-        const helperSlices = Template7Utils.helperToSlices(block);
-        let helperName = helperSlices[0];
-        const isPartial = helperName === '>';
-        const helperContext = [];
-        const helperHash = {};
+        var helperSlices = Template7Utils.helperToSlices(block);
+        var helperName = helperSlices[0];
+        var isPartial = helperName === '>';
+        var helperContext = [];
+        var helperHash = {};
         for (j = 1; j < helperSlices.length; j += 1) {
-          const slice = helperSlices[j];
+          var slice = helperSlices[j];
           if (Array.isArray(slice)) {
             // Hash
             helperHash[slice[0]] = slice[1] === 'false' ? false : slice[1];
@@ -146,13 +149,13 @@ const Template7Utils = {
 
         if (block.indexOf('{#') >= 0) {
           // Condition/Helper
-          let helperContent = '';
-          let elseContent = '';
-          let toSkip = 0;
-          let shiftIndex;
-          let foundClosed = false;
-          let foundElse = false;
-          let depth = 0;
+          var helperContent = '';
+          var elseContent = '';
+          var toSkip = 0;
+          var shiftIndex = void 0;
+          var foundClosed = false;
+          var foundElse = false;
+          var depth = 0;
           for (j = i + 1; j < stringBlocks.length; j += 1) {
             if (stringBlocks[j].indexOf('{{#') >= 0) {
               depth += 1;
@@ -160,11 +163,11 @@ const Template7Utils = {
             if (stringBlocks[j].indexOf('{{/') >= 0) {
               depth -= 1;
             }
-            if (stringBlocks[j].indexOf(`{{#${helperName}`) >= 0) {
+            if (stringBlocks[j].indexOf('{{#' + helperName) >= 0) {
               helperContent += stringBlocks[j];
               if (foundElse) elseContent += stringBlocks[j];
               toSkip += 1;
-            } else if (stringBlocks[j].indexOf(`{{/${helperName}`) >= 0) {
+            } else if (stringBlocks[j].indexOf('{{/' + helperName) >= 0) {
               if (toSkip > 0) {
                 toSkip -= 1;
                 helperContent += stringBlocks[j];
@@ -186,16 +189,16 @@ const Template7Utils = {
             if (helperName === 'raw') {
               blocks.push({
                 type: 'plain',
-                content: helperContent,
+                content: helperContent
               });
             } else {
               blocks.push({
                 type: 'helper',
-                helperName,
+                helperName: helperName,
                 contextName: helperContext,
                 content: helperContent,
                 inverseContent: elseContent,
-                hash: helperHash,
+                hash: helperHash
               });
             }
           }
@@ -203,30 +206,28 @@ const Template7Utils = {
           if (isPartial) {
             helperName = '_partial';
             if (helperContext[0]) {
-              if (helperContext[0].indexOf('[') === 0) helperContext[0] = helperContext[0].replace(/[[\]]/g, '');
-              else helperContext[0] = `"${helperContext[0].replace(/"|'/g, '')}"`;
+              if (helperContext[0].indexOf('[') === 0) helperContext[0] = helperContext[0].replace(/[[\]]/g, '');else helperContext[0] = '"' + helperContext[0].replace(/"|'/g, '') + '"';
             }
           }
           blocks.push({
             type: 'helper',
-            helperName,
+            helperName: helperName,
             contextName: helperContext,
-            hash: helperHash,
+            hash: helperHash
           });
         }
       }
     }
     return blocks;
   },
-  parseJsVariable(expression, replace, object) {
-    return expression.split(/([+ -*/^])/g).map((part) => {
+  parseJsVariable: function parseJsVariable(expression, replace, object) {
+    return expression.split(/([+ -*/^])/g).map(function (part) {
       if (part.indexOf(replace) < 0) return part;
       if (!object) return JSON.stringify('');
-      let variable = object;
-      if (part.indexOf(`${replace}.`) >= 0) {
-        part.split(`${replace}.`)[1].split('.').forEach((partName) => {
-          if (partName in variable) variable = variable[partName];
-          else variable = undefined;
+      var variable = object;
+      if (part.indexOf(replace + '.') >= 0) {
+        part.split(replace + '.')[1].split('.').forEach(function (partName) {
+          if (partName in variable) variable = variable[partName];else variable = undefined;
         });
       }
       if (typeof variable === 'string') {
@@ -236,31 +237,32 @@ const Template7Utils = {
       return variable;
     }).join('');
   },
-  parseJsParents(expression, parents) {
-    return expression.split(/([+ -*^])/g).map((part) => {
+  parseJsParents: function parseJsParents(expression, parents) {
+    return expression.split(/([+ -*^])/g).map(function (part) {
       if (part.indexOf('../') < 0) return part;
       if (!parents || parents.length === 0) return JSON.stringify('');
-      const levelsUp = part.split('../').length - 1;
-      const parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
+      var levelsUp = part.split('../').length - 1;
+      var parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
 
-      let variable = parentData;
-      const parentPart = part.replace(/..\//g, '');
-      parentPart.split('.').forEach((partName) => {
-        if (variable[partName]) variable = variable[partName];
-        else variable = 'undefined';
+      var variable = parentData;
+      var parentPart = part.replace(/..\//g, '');
+      parentPart.split('.').forEach(function (partName) {
+        if (variable[partName]) variable = variable[partName];else variable = 'undefined';
       });
       return JSON.stringify(variable);
     }).join('');
   },
-  getCompileVar(name, ctx, data = 'data_1') {
-    let variable = ctx;
-    let parts;
-    let levelsUp = 0;
-    let newDepth;
+  getCompileVar: function getCompileVar(name, ctx) {
+    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'data_1';
+
+    var variable = ctx;
+    var parts = void 0;
+    var levelsUp = 0;
+    var newDepth = void 0;
     if (name.indexOf('../') === 0) {
       levelsUp = name.split('../').length - 1;
       newDepth = variable.split('_')[1] - levelsUp;
-      variable = `ctx_${newDepth >= 1 ? newDepth : 1}`;
+      variable = 'ctx_' + (newDepth >= 1 ? newDepth : 1);
       parts = name.split('../')[levelsUp].split('.');
     } else if (name.indexOf('@global') === 0) {
       variable = 'Template7.global';
@@ -271,85 +273,89 @@ const Template7Utils = {
     } else {
       parts = name.split('.');
     }
-    for (let i = 0; i < parts.length; i += 1) {
-      const part = parts[i];
+    for (var i = 0; i < parts.length; i += 1) {
+      var part = parts[i];
       if (part.indexOf('@') === 0) {
-        let dataLevel = data.split('_')[1];
+        var dataLevel = data.split('_')[1];
         if (levelsUp > 0) {
           dataLevel = newDepth;
         }
         if (i > 0) {
-          variable += `[(data_${dataLevel} && data_${dataLevel}.${part.replace('@', '')})]`;
+          variable += '[(data_' + dataLevel + ' && data_' + dataLevel + '.' + part.replace('@', '') + ')]';
         } else {
-          variable = `(data_${dataLevel} && data_${dataLevel}.${part.replace('@', '')})`;
+          variable = '(data_' + dataLevel + ' && data_' + dataLevel + '.' + part.replace('@', '') + ')';
         }
       } else if (Number.isFinite ? Number.isFinite(part) : Template7Context.isFinite(part)) {
-        variable += `[${part}]`;
+        variable += '[' + part + ']';
       } else if (part === 'this' || part.indexOf('this.') >= 0 || part.indexOf('this[') >= 0 || part.indexOf('this(') >= 0) {
         variable = part.replace('this', ctx);
       } else {
-        variable += `.${part}`;
+        variable += '.' + part;
       }
     }
     return variable;
   },
-  getCompiledArguments(contextArray, ctx, data) {
-    const arr = [];
-    for (let i = 0; i < contextArray.length; i += 1) {
-      if (/^['"]/.test(contextArray[i])) arr.push(contextArray[i]);
-      else if (/^(true|false|\d+)$/.test(contextArray[i])) arr.push(contextArray[i]);
-      else {
+  getCompiledArguments: function getCompiledArguments(contextArray, ctx, data) {
+    var arr = [];
+    for (var i = 0; i < contextArray.length; i += 1) {
+      if (/^['"]/.test(contextArray[i])) arr.push(contextArray[i]);else if (/^(true|false|\d+)$/.test(contextArray[i])) arr.push(contextArray[i]);else {
         arr.push(Template7Utils.getCompileVar(contextArray[i], ctx, data));
       }
     }
 
     return arr.join(', ');
-  },
+  }
 };
 
 /* eslint no-eval: "off" */
-const Template7Helpers = {
-  _partial(partialName, options) {
-    const ctx = this;
-    const p = Template7Class.partials[partialName];
-    if (!p || (p && !p.template)) return '';
+var Template7Helpers = {
+  _partial: function _partial(partialName, options) {
+    var ctx = this;
+    var p = Template7Class.partials[partialName];
+    if (!p || p && !p.template) return '';
     if (!p.compiled) {
       p.compiled = new Template7Class(p.template).compile();
     }
-    Object.keys(options.hash).forEach((hashName) => {
+    Object.keys(options.hash).forEach(function (hashName) {
       ctx[hashName] = options.hash[hashName];
     });
     return p.compiled(ctx, options.data, options.root);
   },
-  escape(context) {
+  escape: function escape(context) {
     if (typeof context !== 'string') {
       throw new Error('Template7: Passed context to "escape" helper should be a string');
     }
     return Template7Utils.escape(context);
   },
-  if(context, options) {
-    let ctx = context;
-    if (Template7Utils.isFunction(ctx)) { ctx = ctx.call(this); }
+  if: function _if(context, options) {
+    var ctx = context;
+    if (Template7Utils.isFunction(ctx)) {
+      ctx = ctx.call(this);
+    }
     if (ctx) {
       return options.fn(this, options.data);
     }
 
     return options.inverse(this, options.data);
   },
-  unless(context, options) {
-    let ctx = context;
-    if (Template7Utils.isFunction(ctx)) { ctx = ctx.call(this); }
+  unless: function unless(context, options) {
+    var ctx = context;
+    if (Template7Utils.isFunction(ctx)) {
+      ctx = ctx.call(this);
+    }
     if (!ctx) {
       return options.fn(this, options.data);
     }
 
     return options.inverse(this, options.data);
   },
-  each(context, options) {
-    let ctx = context;
-    let ret = '';
-    let i = 0;
-    if (Template7Utils.isFunction(ctx)) { ctx = ctx.call(this); }
+  each: function each(context, options) {
+    var ctx = context;
+    var ret = '';
+    var i = 0;
+    if (Template7Utils.isFunction(ctx)) {
+      ctx = ctx.call(this);
+    }
     if (Array.isArray(ctx)) {
       if (options.hash.reverse) {
         ctx = ctx.reverse();
@@ -362,35 +368,37 @@ const Template7Helpers = {
       }
     } else {
       // eslint-disable-next-line
-      for (const key in ctx) {
+      for (var key in ctx) {
         i += 1;
-        ret += options.fn(ctx[key], { key });
+        ret += options.fn(ctx[key], { key: key });
       }
     }
     if (i > 0) return ret;
     return options.inverse(this);
   },
-  with(context, options) {
-    let ctx = context;
-    if (Template7Utils.isFunction(ctx)) { ctx = context.call(this); }
+  with: function _with(context, options) {
+    var ctx = context;
+    if (Template7Utils.isFunction(ctx)) {
+      ctx = context.call(this);
+    }
     return options.fn(ctx);
   },
-  join(context, options) {
-    let ctx = context;
-    if (Template7Utils.isFunction(ctx)) { ctx = ctx.call(this); }
+  join: function join(context, options) {
+    var ctx = context;
+    if (Template7Utils.isFunction(ctx)) {
+      ctx = ctx.call(this);
+    }
     return ctx.join(options.hash.delimiter || options.hash.delimeter);
   },
-  js(expression, options) {
-    const data = options.data;
-    let func;
-    let execute = expression;
-    ('index first last key').split(' ').forEach((prop) => {
+  js: function js(expression, options) {
+    var data = options.data;
+    var func = void 0;
+    var execute = expression;
+    'index first last key'.split(' ').forEach(function (prop) {
       if (typeof data[prop] !== 'undefined') {
-        const re1 = new RegExp(`this.@${prop}`, 'g');
-        const re2 = new RegExp(`@${prop}`, 'g');
-        execute = execute
-          .replace(re1, JSON.stringify(data[prop]))
-          .replace(re2, JSON.stringify(data[prop]));
+        var re1 = new RegExp('this.@' + prop, 'g');
+        var re2 = new RegExp('@' + prop, 'g');
+        execute = execute.replace(re1, JSON.stringify(data[prop])).replace(re2, JSON.stringify(data[prop]));
       }
     });
     if (options.root && execute.indexOf('@root') >= 0) {
@@ -403,23 +411,21 @@ const Template7Helpers = {
       execute = Template7Utils.parseJsParents(execute, options.parents);
     }
     if (execute.indexOf('return') >= 0) {
-      func = `(function(){${execute}})`;
+      func = '(function(){' + execute + '})';
     } else {
-      func = `(function(){return (${execute})})`;
+      func = '(function(){return (' + execute + ')})';
     }
     return eval(func).call(this);
   },
-  js_if(expression, options) {
-    const data = options.data;
-    let func;
-    let execute = expression;
-    ('index first last key').split(' ').forEach((prop) => {
+  js_if: function js_if(expression, options) {
+    var data = options.data;
+    var func = void 0;
+    var execute = expression;
+    'index first last key'.split(' ').forEach(function (prop) {
       if (typeof data[prop] !== 'undefined') {
-        const re1 = new RegExp(`this.@${prop}`, 'g');
-        const re2 = new RegExp(`@${prop}`, 'g');
-        execute = execute
-          .replace(re1, JSON.stringify(data[prop]))
-          .replace(re2, JSON.stringify(data[prop]));
+        var re1 = new RegExp('this.@' + prop, 'g');
+        var re2 = new RegExp('@' + prop, 'g');
+        execute = execute.replace(re1, JSON.stringify(data[prop])).replace(re2, JSON.stringify(data[prop]));
       }
     });
     if (options.root && execute.indexOf('@root') >= 0) {
@@ -432,145 +438,177 @@ const Template7Helpers = {
       execute = Template7Utils.parseJsParents(execute, options.parents);
     }
     if (execute.indexOf('return') >= 0) {
-      func = `(function(){${execute}})`;
+      func = '(function(){' + execute + '})';
     } else {
-      func = `(function(){return (${execute})})`;
+      func = '(function(){return (' + execute + ')})';
     }
-    const condition = eval(func).call(this);
+    var condition = eval(func).call(this);
     if (condition) {
       return options.fn(this, options.data);
     }
 
     return options.inverse(this, options.data);
-  },
+  }
 };
 Template7Helpers.js_compare = Template7Helpers.js_if;
 
-const Template7Options = {};
-const Template7Partials = {};
-const script = Template7Context.document.createElement('script');
+var Template7Options = {};
+var Template7Partials = {};
+var script = Template7Context.document.createElement('script');
 Template7Context.document.head.appendChild(script);
 
-class Template7Class {
-  constructor(template) {
-    const t = this;
+var Template7Class = function () {
+  function Template7Class(template) {
+    _classCallCheck(this, Template7Class);
+
+    var t = this;
     t.template = template;
   }
-  compile(template = this.template, depth = 1) {
-    const t = this;
-    if (t.compiled) return t.compiled;
 
-    if (typeof template !== 'string') {
-      throw new Error('Template7: Template must be a string');
-    }
-    const { stringToBlocks, getCompileVar, getCompiledArguments } = Template7Utils;
+  _createClass(Template7Class, [{
+    key: 'compile',
+    value: function compile() {
+      var template = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.template;
+      var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-    const blocks = stringToBlocks(template);
-    const ctx = `ctx_${depth}`;
-    const data = `data_${depth}`;
-    if (blocks.length === 0) {
-      return function empty() { return ''; };
-    }
+      var t = this;
+      if (t.compiled) return t.compiled;
 
-    function getCompileFn(block, newDepth) {
-      if (block.content) return t.compile(block.content, newDepth);
-      return function empty() { return ''; };
-    }
-    function getCompileInverse(block, newDepth) {
-      if (block.inverseContent) return t.compile(block.inverseContent, newDepth);
-      return function empty() { return ''; };
-    }
-
-    let resultString = '';
-    if (depth === 1) {
-      resultString += `(function (${ctx}, ${data}, root) {\n`;
-    } else {
-      resultString += `(function (${ctx}, ${data}) {\n`;
-    }
-    if (depth === 1) {
-      resultString += 'function isArray(arr){return Array.isArray(arr);}\n';
-      resultString += 'function isFunction(func){return (typeof func === \'function\');}\n';
-      resultString += 'function c(val, ctx) {if (typeof val !== "undefined" && val !== null) {if (isFunction(val)) {return val.call(ctx);} else return val;} else return "";}\n';
-      resultString += 'root = root || ctx_1 || {};\n';
-    }
-    resultString += 'var r = \'\';\n';
-    let i;
-    for (i = 0; i < blocks.length; i += 1) {
-      const block = blocks[i];
-      // Plain block
-      if (block.type === 'plain') {
-        // eslint-disable-next-line
-        resultString += `r +='${(block.content).replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'')}';`;
-        continue;
+      if (typeof template !== 'string') {
+        throw new Error('Template7: Template must be a string');
       }
-      let variable;
-      let compiledArguments;
-      // Variable block
-      if (block.type === 'variable') {
-        variable = getCompileVar(block.contextName, ctx, data);
-        resultString += `r += c(${variable}, ${ctx});`;
+      var stringToBlocks = Template7Utils.stringToBlocks,
+          getCompileVar = Template7Utils.getCompileVar,
+          getCompiledArguments = Template7Utils.getCompiledArguments;
+
+
+      var blocks = stringToBlocks(template);
+      var ctx = 'ctx_' + depth;
+      var data = 'data_' + depth;
+      if (blocks.length === 0) {
+        return function empty() {
+          return '';
+        };
       }
-      // Helpers block
-      if (block.type === 'helper') {
-        let parents;
-        if (ctx !== 'ctx_1') {
-          const level = ctx.split('_')[1];
-          let parentsString = `ctx_${level - 1}`;
-          for (let j = level - 2; j >= 1; j -= 1) {
-            parentsString += `, ctx_${j}`;
+
+      function getCompileFn(block, newDepth) {
+        if (block.content) return t.compile(block.content, newDepth);
+        return function empty() {
+          return '';
+        };
+      }
+      function getCompileInverse(block, newDepth) {
+        if (block.inverseContent) return t.compile(block.inverseContent, newDepth);
+        return function empty() {
+          return '';
+        };
+      }
+
+      var resultString = '';
+      if (depth === 1) {
+        resultString += '(function (' + ctx + ', ' + data + ', root) {\n';
+      } else {
+        resultString += '(function (' + ctx + ', ' + data + ') {\n';
+      }
+      if (depth === 1) {
+        resultString += 'function isArray(arr){return Array.isArray(arr);}\n';
+        resultString += 'function isFunction(func){return (typeof func === \'function\');}\n';
+        resultString += 'function c(val, ctx) {if (typeof val !== "undefined" && val !== null) {if (isFunction(val)) {return val.call(ctx);} else return val;} else return "";}\n';
+        resultString += 'root = root || ctx_1 || {};\n';
+      }
+      resultString += 'var r = \'\';\n';
+      var i = void 0;
+      for (i = 0; i < blocks.length; i += 1) {
+        var block = blocks[i];
+        // Plain block
+        if (block.type === 'plain') {
+          // eslint-disable-next-line
+          resultString += 'r +=\'' + block.content.replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/'/g, '\\' + '\'') + '\';';
+          continue;
+        }
+        var variable = void 0;
+        var compiledArguments = void 0;
+        // Variable block
+        if (block.type === 'variable') {
+          variable = getCompileVar(block.contextName, ctx, data);
+          resultString += 'r += c(' + variable + ', ' + ctx + ');';
+        }
+        // Helpers block
+        if (block.type === 'helper') {
+          var parents = void 0;
+          if (ctx !== 'ctx_1') {
+            var level = ctx.split('_')[1];
+            var parentsString = 'ctx_' + (level - 1);
+            for (var j = level - 2; j >= 1; j -= 1) {
+              parentsString += ', ctx_' + j;
+            }
+            parents = '[' + parentsString + ']';
+          } else {
+            parents = '[' + ctx + ']';
           }
-          parents = `[${parentsString}]`;
-        } else {
-          parents = `[${ctx}]`;
-        }
-        let dynamicHelper;
-        if (block.helperName.indexOf('[') === 0) {
-          block.helperName = getCompileVar(block.helperName.replace(/[[\]]/g, ''), ctx, data);
-          dynamicHelper = true;
-        }
-        if (dynamicHelper || block.helperName in Template7Helpers) {
-          compiledArguments = getCompiledArguments(block.contextName, ctx, data);
-          resultString += `r += (Template7Helpers${dynamicHelper ? `[${block.helperName}]` : `.${block.helperName}`}).call(${ctx}, ${compiledArguments && (`${compiledArguments}, `)}{hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
-        } else if (block.contextName.length > 0) {
-          throw new Error(`Template7: Missing helper: "${block.helperName}"`);
-        } else {
-          variable = getCompileVar(block.helperName, ctx, data);
-          resultString += `if (${variable}) {`;
-          resultString += `if (isArray(${variable})) {`;
-          resultString += `r += (Template7Helpers.each).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
-          resultString += '}else {';
-          resultString += `r += (Template7Helpers.with).call(${ctx}, ${variable}, {hash:${JSON.stringify(block.hash)}, data: ${data} || {}, fn: ${getCompileFn(block, depth + 1)}, inverse: ${getCompileInverse(block, depth + 1)}, root: root, parents: ${parents}});`;
-          resultString += '}}';
+          var dynamicHelper = void 0;
+          if (block.helperName.indexOf('[') === 0) {
+            block.helperName = getCompileVar(block.helperName.replace(/[[\]]/g, ''), ctx, data);
+            dynamicHelper = true;
+          }
+          if (dynamicHelper || block.helperName in Template7Helpers) {
+            compiledArguments = getCompiledArguments(block.contextName, ctx, data);
+            resultString += 'r += (Template7Helpers' + (dynamicHelper ? '[' + block.helperName + ']' : '.' + block.helperName) + ').call(' + ctx + ', ' + (compiledArguments && compiledArguments + ', ') + '{hash:' + JSON.stringify(block.hash) + ', data: ' + data + ' || {}, fn: ' + getCompileFn(block, depth + 1) + ', inverse: ' + getCompileInverse(block, depth + 1) + ', root: root, parents: ' + parents + '});';
+          } else if (block.contextName.length > 0) {
+            throw new Error('Template7: Missing helper: "' + block.helperName + '"');
+          } else {
+            variable = getCompileVar(block.helperName, ctx, data);
+            resultString += 'if (' + variable + ') {';
+            resultString += 'if (isArray(' + variable + ')) {';
+            resultString += 'r += (Template7Helpers.each).call(' + ctx + ', ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: ' + data + ' || {}, fn: ' + getCompileFn(block, depth + 1) + ', inverse: ' + getCompileInverse(block, depth + 1) + ', root: root, parents: ' + parents + '});';
+            resultString += '}else {';
+            resultString += 'r += (Template7Helpers.with).call(' + ctx + ', ' + variable + ', {hash:' + JSON.stringify(block.hash) + ', data: ' + data + ' || {}, fn: ' + getCompileFn(block, depth + 1) + ', inverse: ' + getCompileInverse(block, depth + 1) + ', root: root, parents: ' + parents + '});';
+            resultString += '}}';
+          }
         }
       }
-    }
-    resultString += '\nreturn r;})';
+      resultString += '\nreturn r;})';
 
-    if (depth === 1) {
-      // eslint-disable-next-line
-      t.compiled = eval(resultString);
-      return t.compiled;
+      if (depth === 1) {
+        // eslint-disable-next-line
+        t.compiled = eval(resultString);
+        return t.compiled;
+      }
+      return resultString;
     }
-    return resultString;
-  }
-  static get options() {
-    return Template7Options;
-  }
-  static get partials() {
-    return Template7Partials;
-  }
-  static get helpers() {
-    return Template7Helpers;
-  }
-}
+  }], [{
+    key: 'options',
+    get: function get() {
+      return Template7Options;
+    }
+  }, {
+    key: 'partials',
+    get: function get() {
+      return Template7Partials;
+    }
+  }, {
+    key: 'helpers',
+    get: function get() {
+      return Template7Helpers;
+    }
+  }]);
 
-function Template7(...args) {
-  const [template, data] = args;
+  return Template7Class;
+}();
+
+function Template7() {
+  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  var template = args[0],
+      data = args[1];
+
   if (args.length === 2) {
-    let instance = new Template7Class(template);
-    const rendered = instance.compile()(data);
+    var instance = new Template7Class(template);
+    var rendered = instance.compile()(data);
     instance = null;
-    return (rendered);
+    return rendered;
   }
   return new Template7Class(template);
 }
@@ -582,7 +620,7 @@ Template7.unregisterHelper = function unregisterHelper(name) {
   delete Template7Class.helpers[name];
 };
 Template7.registerPartial = function registerPartial(name, template) {
-  Template7Class.partials[name] = { template };
+  Template7Class.partials[name] = { template: template };
 };
 Template7.unregisterPartial = function unregisterPartial(name) {
   if (Template7Class.partials[name]) {
@@ -591,7 +629,7 @@ Template7.unregisterPartial = function unregisterPartial(name) {
   }
 };
 Template7.compile = function compile(template, options) {
-  const instance = new Template7Class(template, options);
+  var instance = new Template7Class(template, options);
   return instance.compile();
 };
 
@@ -599,4 +637,4 @@ Template7.options = Template7Class.options;
 Template7.helpers = Template7Class.helpers;
 Template7.partials = Template7Class.partials;
 
-export default Template7;
+exports.default = Template7;
