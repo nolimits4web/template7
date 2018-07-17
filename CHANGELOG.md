@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.3.7 - Released on July 17, 2018
+  * Fixed issue when Template7 used in Node.js environment
+
 ## Template7 v1.3.6 - Released on June 11, 2018
   * Better `@global` parsing in `js` and `js_if` helpers
 

@@ -1,11 +1,8 @@
 import Template7Utils from './utils';
 import Template7Helpers from './helpers';
-import Template7Context from './context';
 
 const Template7Options = {};
 const Template7Partials = {};
-const script = Template7Context.document.createElement('script');
-Template7Context.document.head.appendChild(script);
 
 class Template7Class {
   constructor(template) {
