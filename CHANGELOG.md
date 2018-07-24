@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.3.8 - Released on July 24, 2018
+  * Fixed issue with parsing parents in `js` and `js_if` helpers when properties contain `$` character
+
 ## Template7 v1.3.7 - Released on July 17, 2018
   * Fixed issue when Template7 used in Node.js environment
 

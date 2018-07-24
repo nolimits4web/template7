@@ -196,7 +196,7 @@ const Template7Utils = {
     return blocks;
   },
   parseJsVariable(expression, replace, object) {
-    return expression.split(/([+ -*/^])/g).map((part) => {
+    return expression.split(/([+ \-*/^])/g).map((part) => {
       if (part.indexOf(replace) < 0) return part;
       if (!object) return JSON.stringify('');
       let variable = object;
@@ -214,7 +214,7 @@ const Template7Utils = {
     }).join('');
   },
   parseJsParents(expression, parents) {
-    return expression.split(/([+ -*^])/g).map((part) => {
+    return expression.split(/([+ \-*^])/g).map((part) => {
       if (part.indexOf('../') < 0) return part;
       if (!parents || parents.length === 0) return JSON.stringify('');
       const levelsUp = part.split('../').length - 1;

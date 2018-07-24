@@ -1,5 +1,5 @@
 /**
- * Template7 1.3.7
+ * Template7 1.3.8
  * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
@@ -10,7 +10,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: July 17, 2018
+ * Released on: July 24, 2018
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -226,7 +226,7 @@ var Template7Utils = {
     return blocks;
   },
   parseJsVariable: function parseJsVariable(expression, replace, object) {
-    return expression.split(/([+ -*/^])/g).map(function (part) {
+    return expression.split(/([+ \-*/^])/g).map(function (part) {
       if (part.indexOf(replace) < 0) { return part; }
       if (!object) { return JSON.stringify(''); }
       var variable = object;
@@ -244,7 +244,7 @@ var Template7Utils = {
     }).join('');
   },
   parseJsParents: function parseJsParents(expression, parents) {
-    return expression.split(/([+ -*^])/g).map(function (part) {
+    return expression.split(/([+ \-*^])/g).map(function (part) {
       if (part.indexOf('../') < 0) { return part; }
       if (!parents || parents.length === 0) { return JSON.stringify(''); }
       var levelsUp = part.split('../').length - 1;
