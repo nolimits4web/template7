@@ -3,6 +3,7 @@
   "version": "1.3.8",
   "description": "Mobile-first HTML template engine",
   "main": "dist/template7.js",
+  "types": "template7.d.ts",
   "jsnext:main": "dist/template7.esm.js",
   "module": "dist/template7.esm.js",
   "repository": {
