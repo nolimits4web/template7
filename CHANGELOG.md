@@ -1,5 +1,8 @@
 # Change Log
 
+## Template7 v1.4.0 - Released on August 31, 2018
+  * Added TypeScript definitions
+
 ## Template7 v1.3.8 - Released on July 24, 2018
   * Fixed issue with parsing parents in `js` and `js_if` helpers when properties contain `$` character
 

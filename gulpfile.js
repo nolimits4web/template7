@@ -1,3 +1,4 @@
+const fs = require('fs');
 const gulp = require('gulp');
 const connect = require('gulp-connect');
 const open = require('gulp-open');
@@ -46,6 +47,7 @@ const t7 = {
 
   // Build
 gulp.task('build', (cb) => {
+  fs.copyFileSync('./src/template7.d.ts', './build/template7.d.ts');
   rollup({
     input: './src/template7.js',
     plugins: [buble()],
@@ -120,6 +122,7 @@ function es(cb) {
 // Dist
 gulp.task('dist', (cb) => {
   let cbs = 0;
+  fs.copyFileSync('./src/template7.d.ts', './dist/template7.d.ts');
   umd(() => {
     cbs += 1;
     if (cbs === 2) cb();
