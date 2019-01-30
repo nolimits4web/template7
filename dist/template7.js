@@ -226,7 +226,7 @@ var Template7Utils = {
     return blocks;
   },
   parseJsVariable: function parseJsVariable(expression, replace, object) {
-	  return.expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
+	  return expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
 		  if(!part) {
 			  return arr;
 		  }
@@ -256,7 +256,7 @@ var Template7Utils = {
 	  }, []).join('');
   },
   parseJsParents: function parseJsParents(expression, parents) {
-	  return.expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
+	  return expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
 		  if(!part) {
 			  return arr;
 		  }
