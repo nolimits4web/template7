@@ -196,38 +196,64 @@ const Template7Utils = {
     return blocks;
   },
   parseJsVariable(expression, replace, object) {
-    return expression.split(/([+ \-*/^])/g).map((part) => {
-      if (part.indexOf(replace) < 0) return part;
-      if (!object) return JSON.stringify('');
-      let variable = object;
-      if (part.indexOf(`${replace}.`) >= 0) {
-        part.split(`${replace}.`)[1].split('.').forEach((partName) => {
-          if (partName in variable) variable = variable[partName];
-          else variable = undefined;
-        });
-      }
-      if (typeof variable === 'string') {
-        variable = JSON.stringify(variable);
-      }
-      if (variable === undefined) variable = 'undefined';
-      return variable;
-    }).join('');
+	  return.expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
+		  if(!part) {
+			  return arr;
+		  }
+		  if(part.indexOf(replace) < 0) {
+			  arr.push(part);
+			  return arr;
+		  }
+		  if(!object) {
+			  arr.push(JSON.stringify(''));
+			  return arr;
+		  }
+
+		  let variable = object;
+		  if (part.indexOf(`${replace}.`) >= 0) {
+			  part.split(`${replace}.`)[1].split('.').forEach((partName) => {
+				  if (partName in variable) variable = variable[partName];
+				  else variable = undefined;
+			  });
+		  }
+		  if (typeof variable === 'string') {
+			  variable = JSON.stringify(variable);
+		  }
+		  if (variable === undefined) variable = 'undefined';
+
+		  arr.push(variable);
+		  return arr;
+	  }, []).join('');
   },
   parseJsParents(expression, parents) {
-    return expression.split(/([+ \-*^])/g).map((part) => {
-      if (part.indexOf('../') < 0) return part;
-      if (!parents || parents.length === 0) return JSON.stringify('');
-      const levelsUp = part.split('../').length - 1;
-      const parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
+	  return.expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
+		  if(!part) {
+			  return arr;
+		  }
 
-      let variable = parentData;
-      const parentPart = part.replace(/..\//g, '');
-      parentPart.split('.').forEach((partName) => {
-        if (variable[partName]) variable = variable[partName];
-        else variable = 'undefined';
-      });
-      return JSON.stringify(variable);
-    }).join('');
+		  if(part.indexOf('../') < 0) {
+			  arr.push(part);
+			  return arr;
+		  }
+
+		  if (!parents || parents.length === 0) {
+			  arr.push(JSON.stringify(''));
+			  return arr;
+		  }
+
+		  const levelsUp = part.split('../').length - 1;
+		  const parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
+
+		  let variable = parentData;
+		  const parentPart = part.replace(/..\//g, '');
+		  parentPart.split('.').forEach((partName) => {
+			  if (variable[partName]) variable = variable[partName];
+			  else variable = 'undefined';
+		  });
+
+		  arr.push(JSON.stringify(variable));
+		  return arr;
+	  }, []).join('');
   },
   getCompileVar(name, ctx, data = 'data_1') {
     let variable = ctx;
