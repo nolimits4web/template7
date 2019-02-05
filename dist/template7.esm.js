@@ -1,17 +1,18 @@
 /**
- * Template7 1.4.0
+ * Template7 1.4.1
  * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
  * 
- * Copyright 2018, Vladimir Kharlampidi
+ * Copyright 2019, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  * 
  * Licensed under MIT
  * 
- * Released on: August 31, 2018
+ * Released on: February 5, 2019
  */
+
 let t7ctx;
 if (typeof window !== 'undefined') {
   t7ctx = window;
@@ -29,14 +30,13 @@ const Template7Utils = {
   isFunction(func) {
     return typeof func === 'function';
   },
-  escape(string) {
-    return (typeof Template7Context !== 'undefined' && Template7Context.escape) ?
-      Template7Context.escape(string) :
-      string
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+  escape(string = '') {
+    return string
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   },
   helperToSlices(string) {
     const { quoteDoubleRexExp, quoteSingleRexExp } = Template7Utils;
@@ -219,9 +219,19 @@ const Template7Utils = {
     return blocks;
   },
   parseJsVariable(expression, replace, object) {
-    return expression.split(/([+ \-*/^])/g).map((part) => {
-      if (part.indexOf(replace) < 0) return part;
-      if (!object) return JSON.stringify('');
+    return expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce((arr, part) => {
+      if (!part) {
+        return arr;
+      }
+      if (part.indexOf(replace) < 0) {
+        arr.push(part);
+        return arr;
+      }
+      if (!object) {
+        arr.push(JSON.stringify(''));
+        return arr;
+      }
+
       let variable = object;
       if (part.indexOf(`${replace}.`) >= 0) {
         part.split(`${replace}.`)[1].split('.').forEach((partName) => {
@@ -233,24 +243,47 @@ const Template7Utils = {
         variable = JSON.stringify(variable);
       }
       if (variable === undefined) variable = 'undefined';
-      return variable;
-    }).join('');
+
+      arr.push(variable);
+      return arr;
+    }, []).join('');
   },
   parseJsParents(expression, parents) {
-    return expression.split(/([+ \-*^])/g).map((part) => {
-      if (part.indexOf('../') < 0) return part;
-      if (!parents || parents.length === 0) return JSON.stringify('');
+    return expression.split(/([+ \-*^()&=|<>!%:?])/g).reduce((arr, part) => {
+      if (!part) {
+        return arr;
+      }
+
+      if (part.indexOf('../') < 0) {
+        arr.push(part);
+        return arr;
+      }
+
+      if (!parents || parents.length === 0) {
+        arr.push(JSON.stringify(''));
+        return arr;
+      }
+
       const levelsUp = part.split('../').length - 1;
       const parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
 
       let variable = parentData;
       const parentPart = part.replace(/..\//g, '');
       parentPart.split('.').forEach((partName) => {
-        if (variable[partName]) variable = variable[partName];
+        if (typeof variable[partName] !== 'undefined') variable = variable[partName];
         else variable = 'undefined';
       });
-      return JSON.stringify(variable);
-    }).join('');
+      if (variable === false || variable === true) {
+        arr.push(JSON.stringify(variable));
+        return arr;
+      }
+      if (variable === null || variable === 'undefined') {
+        arr.push(JSON.stringify(''));
+        return arr;
+      }
+      arr.push(JSON.stringify(variable));
+      return arr;
+    }, []).join('');
   },
   getCompileVar(name, ctx, data = 'data_1') {
     let variable = ctx;
@@ -308,6 +341,7 @@ const Template7Utils = {
 };
 
 /* eslint no-eval: "off" */
+
 const Template7Helpers = {
   _partial(partialName, options) {
     const ctx = this;

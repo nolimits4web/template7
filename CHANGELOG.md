@@ -1,5 +1,9 @@
 # Change Log
 
+## Template7 v1.4.1 - Released on February 5, 2019
+  * Relaxed `escape` helper to escape only `<>&"'` characters
+  * Improved variables parsing in `js` and `js_if` helpers
+
 ## Template7 v1.4.0 - Released on August 31, 2018
   * Added TypeScript definitions
 
