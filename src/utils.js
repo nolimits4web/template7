@@ -6,14 +6,13 @@ const Template7Utils = {
   isFunction(func) {
     return typeof func === 'function';
   },
-  escape(string) {
-    return (typeof Template7Context !== 'undefined' && Template7Context.escape) ?
-      Template7Context.escape(string) :
-      string
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+  escape(string = '') {
+    return string
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   },
   helperToSlices(string) {
     const { quoteDoubleRexExp, quoteSingleRexExp } = Template7Utils;
