@@ -225,7 +225,7 @@ const Template7Utils = {
     }, []).join('');
   },
   parseJsParents(expression, parents) {
-    return expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce((arr, part) => {
+    return expression.split(/([+ \-*^()&=|<>!%:?])/g).reduce((arr, part) => {
       if (!part) {
         return arr;
       }
@@ -246,10 +246,17 @@ const Template7Utils = {
       let variable = parentData;
       const parentPart = part.replace(/..\//g, '');
       parentPart.split('.').forEach((partName) => {
-        if (variable[partName]) variable = variable[partName];
+        if (typeof variable[partName] !== 'undefined') variable = variable[partName];
         else variable = 'undefined';
       });
-
+      if (variable === false || variable === true) {
+        arr.push(JSON.stringify(variable));
+        return arr;
+      }
+      if (variable === null || variable === 'undefined') {
+        arr.push(JSON.stringify(''));
+        return arr;
+      }
       arr.push(JSON.stringify(variable));
       return arr;
     }, []).join('');
