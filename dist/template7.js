@@ -226,38 +226,64 @@ var Template7Utils = {
     return blocks;
   },
   parseJsVariable: function parseJsVariable(expression, replace, object) {
-    return expression.split(/([+ \-*/^])/g).map(function (part) {
-      if (part.indexOf(replace) < 0) { return part; }
-      if (!object) { return JSON.stringify(''); }
-      var variable = object;
-      if (part.indexOf((replace + ".")) >= 0) {
-        part.split((replace + "."))[1].split('.').forEach(function (partName) {
-          if (partName in variable) { variable = variable[partName]; }
-          else { variable = undefined; }
-        });
-      }
-      if (typeof variable === 'string') {
-        variable = JSON.stringify(variable);
-      }
-      if (variable === undefined) { variable = 'undefined'; }
-      return variable;
-    }).join('');
+	  return expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
+		  if(!part) {
+			  return arr;
+		  }
+		  if(part.indexOf(replace) < 0) {
+			  arr.push(part);
+			  return arr;
+		  }
+		  if(!object) {
+			  arr.push(JSON.stringify(''));
+			  return arr;
+		  }
+
+		  var variable = object;
+		  if (part.indexOf((replace + ".")) >= 0) {
+			  part.split((replace + "."))[1].split('.').forEach(function (partName) {
+				  if (partName in variable) variable = variable[partName];
+				  else variable = undefined;
+			  });
+		  }
+		  if (typeof variable === 'string') {
+			  variable = JSON.stringify(variable);
+		  }
+		  if (variable === undefined) variable = 'undefined';
+
+		  arr.push(variable);
+		  return arr;
+	  }, []).join('');
   },
   parseJsParents: function parseJsParents(expression, parents) {
-    return expression.split(/([+ \-*^])/g).map(function (part) {
-      if (part.indexOf('../') < 0) { return part; }
-      if (!parents || parents.length === 0) { return JSON.stringify(''); }
-      var levelsUp = part.split('../').length - 1;
-      var parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
+	  return expression.split(/([+ \-*/^()&=|<>!%:?])/g).reduce(function(arr, part) {
+		  if(!part) {
+			  return arr;
+		  }
 
-      var variable = parentData;
-      var parentPart = part.replace(/..\//g, '');
-      parentPart.split('.').forEach(function (partName) {
-        if (variable[partName]) { variable = variable[partName]; }
-        else { variable = 'undefined'; }
-      });
-      return JSON.stringify(variable);
-    }).join('');
+		  if(part.indexOf('../') < 0) {
+			  arr.push(part);
+			  return arr;
+		  }
+
+		  if (!parents || parents.length === 0) {
+			  arr.push(JSON.stringify(''));
+			  return arr;
+		  }
+
+		  var levelsUp = part.split('../').length - 1;
+		  var parentData = levelsUp > parents.length ? parents[parents.length - 1] : parents[levelsUp - 1];
+
+		  var variable = parentData;
+		  var parentPart = part.replace(/..\//g, '');
+		  parentPart.split('.').forEach(function (partName) {
+			  if (variable[partName]) { variable = variable[partName]; }
+			  else { variable = 'undefined'; }
+		  });
+
+		  arr.push(JSON.stringify(variable));
+		  return arr;
+	  }, []).join('');
   },
   getCompileVar: function getCompileVar(name, ctx, data) {
     if ( data === void 0 ) data = 'data_1';
