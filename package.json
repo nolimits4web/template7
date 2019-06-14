@@ -1,6 +1,6 @@
 {
   "name": "template7",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Mobile-first HTML template engine",
   "main": "dist/template7.js",
   "types": "dist/template7.d.ts",

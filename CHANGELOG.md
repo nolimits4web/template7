@@ -1,5 +1,9 @@
 # Change Log
 
+## Template7 v1.4.2 - Released on June 14, 2019
+  * `escape` helper won't throw errors when `undefined` or `null` passed, it will just return empty string
+  * Fixed issue when referencing array or object in `js_if @root` could throw errors
+
 ## Template7 v1.4.1 - Released on February 5, 2019
   * Relaxed `escape` helper to escape only `<>&"'` characters
   * Improved variables parsing in `js` and `js_if` helpers

@@ -1,5 +1,5 @@
 /**
- * Template7 1.4.1
+ * Template7 1.4.2
  * Mobile-first HTML template engine
  * 
  * http://www.idangero.us/template7/
@@ -10,7 +10,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: February 5, 2019
+ * Released on: June 14, 2019
  */
 
 let t7ctx;
@@ -239,7 +239,11 @@ const Template7Utils = {
           else variable = undefined;
         });
       }
-      if (typeof variable === 'string') {
+      if (
+        (typeof variable === 'string')
+        || Array.isArray(variable)
+        || (variable.constructor && variable.constructor === Object)
+      ) {
         variable = JSON.stringify(variable);
       }
       if (variable === undefined) variable = 'undefined';
@@ -247,6 +251,7 @@ const Template7Utils = {
       arr.push(variable);
       return arr;
     }, []).join('');
+
   },
   parseJsParents(expression, parents) {
     return expression.split(/([+ \-*^()&=|<>!%:?])/g).reduce((arr, part) => {
@@ -356,6 +361,7 @@ const Template7Helpers = {
     return p.compiled(ctx, options.data, options.root);
   },
   escape(context) {
+    if (typeof context === 'undefined' || context === null) return '';
     if (typeof context !== 'string') {
       throw new Error('Template7: Passed context to "escape" helper should be a string');
     }
