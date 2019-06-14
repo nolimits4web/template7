@@ -17,6 +17,7 @@ const Template7Helpers = {
     return p.compiled(ctx, options.data, options.root);
   },
   escape(context) {
+    if (typeof context === 'undefined' || context === null) return '';
     if (typeof context !== 'string') {
       throw new Error('Template7: Passed context to "escape" helper should be a string');
     }
