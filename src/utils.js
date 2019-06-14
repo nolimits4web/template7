@@ -215,7 +215,11 @@ const Template7Utils = {
           else variable = undefined;
         });
       }
-      if (typeof variable === 'string') {
+      if (
+        (typeof variable === 'string')
+        || Array.isArray(variable)
+        || (variable.constructor && variable.constructor === Object)
+      ) {
         variable = JSON.stringify(variable);
       }
       if (variable === undefined) variable = 'undefined';
@@ -223,6 +227,7 @@ const Template7Utils = {
       arr.push(variable);
       return arr;
     }, []).join('');
+
   },
   parseJsParents(expression, parents) {
     return expression.split(/([+ \-*^()&=|<>!%:?])/g).reduce((arr, part) => {
