@@ -1,4 +1,4 @@
-<a href="https://www.patreon.com/vladimirkharlampidi"><img src="https://cdn.framework7.io/i/support-badge.png" height="20"></a>
+<a href="https://www.patreon.com/vladimirkharlampidi"><img src="https://framework7.io/i/support-badge.png" height="20"></a>
 [![devDependency Status](https://david-dm.org/nolimits4web/template7/dev-status.svg)](https://david-dm.org/nolimits4web/template7#info=devDependencies)
 
 Template7
