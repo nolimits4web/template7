@@ -414,8 +414,10 @@
       } else {
         // eslint-disable-next-line
         for (var key in ctx) {
-          i += 1;
-          ret += options.fn(ctx[key], { key: key });
+          if (ctx.hasOwnProperty(key)) {
+            i += 1;
+            ret += options.fn(ctx[key], { key: key });
+          }
         }
       }
       if (i > 0) { return ret; }
