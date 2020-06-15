@@ -215,6 +215,11 @@ const Template7Utils = {
           else variable = undefined;
         });
       }
+
+      if (variable === undefined || variable === null) {
+        variable = String(variable);
+      }
+
       if (
         (typeof variable === 'string')
         || Array.isArray(variable)
@@ -222,7 +227,6 @@ const Template7Utils = {
       ) {
         variable = JSON.stringify(variable);
       }
-      if (variable === undefined) variable = 'undefined';
 
       arr.push(variable);
       return arr;
